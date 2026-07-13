@@ -40,10 +40,11 @@ The existing NestJS and React trees remain available as compatibility evidence. 
 **Files:**
 - Create: `toolchain/native-tools.json`
 - Create: `scripts/native/environment-contracts.test.cjs`
+- Create: `scripts/native/install-tools.ps1`
 - Create: `scripts/native/check-environment.ps1`
 - Modify: `.gitignore`
 
-- [ ] **Step 1: Write the failing toolchain contract test**
+- [x] **Step 1: Write the failing toolchain contract test**
 
 The Node test must assert exact, non-floating versions for Buf, sqlc, goose, all four Buf plugins, Go, and Python. It must also assert that `check-environment.ps1` checks WSL PostgreSQL, pgvector, and Redis and contains no Docker command.
 
@@ -63,13 +64,13 @@ test('pins the native toolchain without Docker', () => {
 });
 ```
 
-- [ ] **Step 2: Run the test and confirm the missing manifest failure**
+- [x] **Step 2: Run the test and confirm the missing manifest failure**
 
 Run: `node --test scripts/native/environment-contracts.test.cjs`
 
 Expected: FAIL because `toolchain/native-tools.json` does not exist.
 
-- [ ] **Step 3: Add the pinned manifest and environment checker**
+- [x] **Step 3: Add the pinned manifest and environment checker**
 
 Pin these tool versions:
 
@@ -85,6 +86,8 @@ Pin these tool versions:
   }
 }
 ```
+
+The manifest also records the official Windows AMD64 release URL and SHA-256 digest for each CLI. `install-tools.ps1` downloads each release to a temporary directory, verifies `Get-FileHash -Algorithm SHA256`, extracts the sqlc ZIP, and atomically places the three executables in `$(go env GOPATH)\bin`.
 
 `check-environment.ps1` must return non-zero unless all of the following are true:
 
@@ -102,21 +105,19 @@ wsl.exe -u postgres -- psql -X -Atc "SELECT extversion FROM pg_extension WHERE e
 
 Add `.runtime/`, `flowai-studio-sandbox/runtime/`, and `*.wasm` to `.gitignore`; keep `.env.example` files tracked and all real `.env*` files ignored.
 
-- [ ] **Step 4: Install and verify the pinned Go tools**
+- [x] **Step 4: Install and verify the pinned Go tools**
 
-Run:
+The source-build attempt exhausted the machine's available memory, so use the checksum-verified official release assets instead of `go install`:
 
 ```powershell
-go install github.com/bufbuild/buf/cmd/buf@v1.71.0
-go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.31.1
-go install github.com/pressly/goose/v3/cmd/goose@v3.27.2
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/install-tools.ps1
 node --test scripts/native/environment-contracts.test.cjs
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/check-environment.ps1
 ```
 
 Expected: the test passes and the environment checker reports Go 1.26, Python 3.13, PostgreSQL 16, pgvector 0.8.5, Redis 7, and the three pinned tools.
 
-- [ ] **Step 5: Commit the toolchain increment**
+- [x] **Step 5: Commit the toolchain increment**
 
 Commit only Task 1 files with message `chore: pin native migration toolchain`.
 
@@ -542,4 +543,3 @@ Check off completed tasks and record exact versions, test counts, local addresse
 - [ ] **Step 4: Commit phase documentation**
 
 Commit only the plan and README changes with message `docs: record native foundation completion`.
-

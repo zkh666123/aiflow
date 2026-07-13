@@ -18,6 +18,9 @@ yarn-error.log*
 **/.vite/
 **/.next/
 **/coverage/
+.runtime/
+flowai-studio-sandbox/runtime/
+*.wasm
 
 # Env files / secrets
 **/.env
