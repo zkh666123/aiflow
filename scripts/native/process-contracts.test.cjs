@@ -16,7 +16,7 @@ test('manages only workspace-owned hidden native processes', () => {
   const start = requiredFile('scripts/native/start-services.ps1');
   const stop = requiredFile('scripts/native/stop-services.ps1');
   const check = requiredFile('scripts/native/check-services.ps1');
-  requiredFile('scripts/native/check-grpc.py');
+  const grpcCheck = requiredFile('scripts/native/check-grpc.py');
 
   assert.match(loader, /\.env\.native/);
   assert.match(loader, /Set-Item\s+-Path\s+"Env:/);
@@ -34,12 +34,19 @@ test('manages only workspace-owned hidden native processes', () => {
 
   assert.match(stop, /Get-Process\s+-Id/);
   assert.match(stop, /\.Path/);
+  assert.match(stop, /\.StartTime/);
+  assert.match(stop, /startedAt/);
   assert.match(stop, /Stop-Process\s+-Id/);
   assert.doesNotMatch(stop, /Get-Process\s+-Name|taskkill|Stop-Process\s+-Name/i);
 
   assert.match(check, /check-grpc\.py/);
   assert.match(check, /Invoke-RestMethod/);
   assert.match(check, /127\.0\.0\.1/);
+  assert.match(check, /\$go\.data\.checks\.database\.status/);
+  assert.match(check, /\$go\.data\.checks\.sandbox\.status/);
+  assert.doesNotMatch(check, /--token/);
+  assert.match(grpcCheck, /os\.environ\["FLOWAI_GRPC_TOKEN"\]/);
+  assert.doesNotMatch(grpcCheck, /add_argument\("--token"/);
 });
 
 test('keeps the frontend proxy switchable between legacy and Go', () => {

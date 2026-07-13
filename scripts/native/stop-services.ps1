@@ -31,6 +31,11 @@ foreach ($name in @('control-plane', 'ai-runtime', 'sandbox')) {
         if (-not $actualExecutable.Equals($expectedExecutable, [StringComparison]::OrdinalIgnoreCase)) {
             throw "Refusing to stop PID $($record.pid) because its executable identity changed."
         }
+        $recordedStart = [DateTime]::Parse([string]$record.startedAt).ToUniversalTime()
+        $actualStart = $process.StartTime.ToUniversalTime()
+        if ([Math]::Abs(($actualStart - $recordedStart).TotalSeconds) -gt 2) {
+            throw "Refusing to stop PID $($record.pid) because its start time identity changed."
+        }
         Stop-Process -Id $process.Id -Force
         $process.WaitForExit(5000) | Out-Null
     }

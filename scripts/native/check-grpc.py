@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from datetime import UTC, datetime, timedelta
 
 import grpc
@@ -26,10 +27,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("service", choices=("ai", "sandbox"))
     parser.add_argument("--address", required=True)
-    parser.add_argument("--token", required=True)
     arguments = parser.parse_args()
 
-    metadata = ((METADATA_KEY, arguments.token),)
+    token = os.environ["FLOWAI_GRPC_TOKEN"]
+    metadata = ((METADATA_KEY, token),)
     with grpc.insecure_channel(arguments.address) as channel:
         if arguments.service == "ai":
             response = models_pb2_grpc.ModelServiceStub(channel).HealthCheck(

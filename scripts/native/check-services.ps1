@@ -13,8 +13,8 @@ if ((& wsl.exe -- redis-cli -h 127.0.0.1 -p 6379 ping).Trim() -ne 'PONG') {
 
 $python = Join-Path $root 'proto\python\.venv\Scripts\python.exe'
 $grpcCheck = Join-Path $PSScriptRoot 'check-grpc.py'
-$ai = (& $python $grpcCheck ai --address $env:FLOWAI_AI_GRPC_ADDR --token $env:FLOWAI_GRPC_TOKEN | ConvertFrom-Json)
-$sandbox = (& $python $grpcCheck sandbox --address $env:FLOWAI_SANDBOX_GRPC_ADDR --token $env:FLOWAI_GRPC_TOKEN | ConvertFrom-Json)
+$ai = (& $python $grpcCheck ai --address $env:FLOWAI_AI_GRPC_ADDR | ConvertFrom-Json)
+$sandbox = (& $python $grpcCheck sandbox --address $env:FLOWAI_SANDBOX_GRPC_ADDR | ConvertFrom-Json)
 $go = Invoke-RestMethod -Uri 'http://127.0.0.1:3001/api/health' -TimeoutSec 15
 
 if ($ai.state -ne 'HEALTH_STATE_HEALTHY') {
@@ -25,6 +25,25 @@ if ($sandbox.state -notin @('HEALTH_STATE_HEALTHY', 'HEALTH_STATE_NOT_READY')) {
 }
 if (-not $go.success) {
     throw 'Go control plane health envelope reported failure.'
+}
+if ($go.data.checks.database.status -ne 'healthy') {
+    throw "Go database check is $($go.data.checks.database.status)"
+}
+if ($go.data.checks.redis.status -ne 'healthy') {
+    throw "Go Redis check is $($go.data.checks.redis.status)"
+}
+if ($go.data.checks.pgvector.status -ne 'healthy') {
+    throw "Go pgvector check is $($go.data.checks.pgvector.status)"
+}
+if ($go.data.checks.aiRuntime.status -ne 'healthy') {
+    throw "Go AI runtime check is $($go.data.checks.aiRuntime.status)"
+}
+if ($go.data.checks.sandbox.status -notin @('healthy', 'not_ready')) {
+    throw "Go sandbox check is $($go.data.checks.sandbox.status)"
+}
+$expectedControlPlane = if ($go.data.checks.sandbox.status -eq 'healthy') { 'healthy' } else { 'degraded' }
+if ($go.data.status -ne $expectedControlPlane) {
+    throw "Go control plane status is $($go.data.status), expected $expectedControlPlane"
 }
 
 [ordered]@{
