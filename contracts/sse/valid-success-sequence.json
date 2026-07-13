@@ -1,0 +1,73 @@
+[
+  {
+    "type": "workflow_start",
+    "data": {
+      "executionId": "execution-success",
+      "totalNodes": 1,
+      "control": {
+        "workflowTimeoutMs": 300000,
+        "nodeTimeoutMs": 60000,
+        "heartbeatIntervalMs": 15000,
+        "maxRetries": 0,
+        "continueOnError": false
+      }
+    }
+  },
+  {
+    "type": "node_status",
+    "data": {
+      "nodeId": "agent-1",
+      "status": "running",
+      "progress": { "executed": 0, "total": 1 }
+    }
+  },
+  {
+    "type": "agent_trace",
+    "data": {
+      "nodeId": "agent-1",
+      "trace": {
+        "type": "thinking",
+        "content": "Selecting the next tool",
+        "agentId": "single_agent",
+        "timestamp": 1783944000000
+      }
+    }
+  },
+  {
+    "type": "heartbeat",
+    "data": {
+      "beat": 1,
+      "elapsedMs": 15000,
+      "timestamp": 1783944015000,
+      "progress": {
+        "executed": 0,
+        "total": 1,
+        "percentage": 0,
+        "currentNode": "agent-1"
+      }
+    }
+  },
+  {
+    "type": "node_status",
+    "data": {
+      "nodeId": "agent-1",
+      "status": "success",
+      "output": { "result": "done" },
+      "durationMs": 16000,
+      "progress": { "executed": 1, "total": 1 }
+    }
+  },
+  {
+    "type": "done",
+    "data": {
+      "finalContext": { "agent-1": { "result": "done" } },
+      "stats": {
+        "executed": 1,
+        "skipped": 0,
+        "failed": 0,
+        "total": 1,
+        "durationMs": 16000
+      }
+    }
+  }
+]

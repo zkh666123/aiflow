@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://flowai.studio/contracts/http/response-envelope.schema.json",
+  "title": "FlowAI Studio API Response Envelope",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["success", "code", "message", "data", "timestamp"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "code": { "type": "string", "minLength": 1 },
+    "message": { "type": "string" },
+    "data": {},
+    "timestamp": { "type": "string", "format": "date-time" },
+    "path": { "type": "string" }
+  }
+}

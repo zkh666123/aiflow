@@ -1,0 +1,58 @@
+[
+  {
+    "type": "workflow_start",
+    "data": {
+      "executionId": "execution-error",
+      "totalNodes": 1,
+      "control": {
+        "workflowTimeoutMs": 300000,
+        "nodeTimeoutMs": 60000,
+        "heartbeatIntervalMs": 15000,
+        "maxRetries": 1,
+        "continueOnError": false
+      }
+    }
+  },
+  {
+    "type": "node_status",
+    "data": {
+      "nodeId": "llm-1",
+      "status": "running",
+      "progress": { "executed": 0, "total": 1 }
+    }
+  },
+  {
+    "type": "node_status",
+    "data": {
+      "nodeId": "llm-1",
+      "status": "retrying",
+      "attempt": 1,
+      "delayMs": 1000,
+      "error": "provider unavailable"
+    }
+  },
+  {
+    "type": "node_status",
+    "data": {
+      "nodeId": "llm-1",
+      "status": "failed",
+      "error": "provider unavailable"
+    }
+  },
+  {
+    "type": "error",
+    "data": {
+      "message": "Error executing node llm-1: provider unavailable",
+      "nodeId": "llm-1",
+      "isTimeout": false,
+      "isCancelled": false,
+      "stats": {
+        "executed": 0,
+        "skipped": 0,
+        "failed": 1,
+        "total": 1,
+        "durationMs": 1200
+      }
+    }
+  }
+]

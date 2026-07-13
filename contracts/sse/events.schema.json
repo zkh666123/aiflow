@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://flowai.studio/contracts/sse/events.schema.json",
+  "title": "FlowAI Studio Workflow SSE Event",
+  "oneOf": [
+    { "$ref": "#/$defs/workflowStart" },
+    { "$ref": "#/$defs/nodeStatusEvent" },
+    { "$ref": "#/$defs/agentTraceEvent" },
+    { "$ref": "#/$defs/heartbeatEvent" },
+    { "$ref": "#/$defs/doneEvent" },
+    { "$ref": "#/$defs/errorEvent" }
+  ],
+  "$defs": {
+    "eventType": {
+      "enum": [
+        "workflow_start",
+        "node_status",
+        "agent_trace",
+        "heartbeat",
+        "done",
+        "error"
+      ]
+    },
+    "nodeStatus": {
+      "enum": [
+        "running",
+        "retrying",
+        "success",
+        "skipped",
+        "timeout",
+        "failed"
+      ]
+    },
+    "traceType": {
+      "enum": [
+        "thinking",
+        "tool_call",
+        "tool_result",
+        "rag_retrieve",
+        "worker_delegate",
+        "worker_result",
+        "final_answer",
+        "error"
+      ]
+    },
+    "progress": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["executed", "total"],
+      "properties": {
+        "executed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 },
+        "percentage": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "currentNode": { "type": "string" }
+      }
+    },
+    "executionStats": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["executed", "skipped", "failed", "total", "durationMs"],
+      "properties": {
+        "executed": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 },
+        "durationMs": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "workflowStart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "data"],
+      "properties": {
+        "type": { "const": "workflow_start" },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["executionId", "totalNodes", "control"],
+          "properties": {
+            "executionId": { "type": "string", "minLength": 1 },
+            "totalNodes": { "type": "integer", "minimum": 0 },
+            "control": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "workflowTimeoutMs": { "type": "integer", "minimum": 0 },
+                "nodeTimeoutMs": { "type": "integer", "minimum": 0 },
+                "heartbeatIntervalMs": { "type": "integer", "minimum": 0 },
+                "maxRetries": { "type": "integer", "minimum": 0 },
+                "continueOnError": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "nodeStatusEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "data"],
+      "properties": {
+        "type": { "const": "node_status" },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["nodeId", "status"],
+          "properties": {
+            "nodeId": { "type": "string", "minLength": 1 },
+            "status": { "$ref": "#/$defs/nodeStatus" },
+            "output": {},
+            "error": { "type": "string" },
+            "attempt": { "type": "integer", "minimum": 1 },
+            "delayMs": { "type": "integer", "minimum": 0 },
+            "durationMs": { "type": "integer", "minimum": 0 },
+            "progress": { "$ref": "#/$defs/progress" }
+          }
+        }
+      }
+    },
+    "agentTraceEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "data"],
+      "properties": {
+        "type": { "const": "agent_trace" },
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["nodeId", "trace"],
+          "properties": {
+            "nodeId": { "type": "string", "minLength": 1 },
+            "trace": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": ["type", "content", "timestamp"],
+              "properties": {
+                "type": { "$ref": "#/$defs/traceType" },
+                "content": { "type": "string" },
+                "agentId": { "type": "string" },
+                "timestamp": { "type": "integer", "minimum": 0 },
+                "data": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "heartbeatEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "data"],
+      "properties": {
+        "type": { "const": "heartbeat" },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["beat", "elapsedMs", "timestamp"],
+          "properties": {
+            "beat": { "type": "integer", "minimum": 1 },
+            "elapsedMs": { "type": "integer", "minimum": 0 },
+            "timestamp": { "type": "integer", "minimum": 0 },
+            "progress": { "$ref": "#/$defs/progress" }
+          }
+        }
+      }
+    },
+    "doneEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "data"],
+      "properties": {
+        "type": { "const": "done" },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["finalContext", "stats"],
+          "properties": {
+            "finalContext": { "type": "object" },
+            "stats": { "$ref": "#/$defs/executionStats" }
+          }
+        }
+      }
+    },
+    "errorEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "data"],
+      "properties": {
+        "type": { "const": "error" },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["message"],
+          "properties": {
+            "message": { "type": "string", "minLength": 1 },
+            "nodeId": { "type": "string" },
+            "isTimeout": { "type": "boolean" },
+            "isCancelled": { "type": "boolean" },
+            "scope": { "type": "string" },
+            "stats": { "$ref": "#/$defs/executionStats" }
+          }
+        }
+      }
+    }
+  }
+}
