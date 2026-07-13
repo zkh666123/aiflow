@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://flowai.studio/contracts/workflow/workflow-dsl.schema.json",
+  "title": "FlowAI Studio Workflow DSL 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "kind", "metadata", "spec"],
+  "properties": {
+    "version": { "const": "1.0" },
+    "kind": { "const": "Workflow" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "exportedAt": { "type": "string", "format": "date-time" },
+        "engine": { "type": "string" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodes", "edges"],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "$ref": "node-types.schema.json" },
+              { "$ref": "#/$defs/legacyUserInputNode" }
+            ]
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": { "$ref": "workflow.schema.json#/$defs/edge" }
+        },
+        "variables": { "type": "object" }
+      }
+    }
+  },
+  "$defs": {
+    "legacyUserInputNode": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "type", "position", "data"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": { "const": "user-input" },
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["x", "y"],
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          }
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["label", "inputField"],
+          "properties": {
+            "label": { "type": "string", "minLength": 1 },
+            "inputField": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  }
+}

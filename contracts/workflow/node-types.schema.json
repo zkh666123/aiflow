@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://flowai.studio/contracts/workflow/node-types.schema.json",
+  "title": "FlowAI Studio Workflow Node",
+  "oneOf": [
+    { "$ref": "#/$defs/startNode" },
+    { "$ref": "#/$defs/userInputNode" },
+    { "$ref": "#/$defs/llmNode" },
+    { "$ref": "#/$defs/ragNode" },
+    { "$ref": "#/$defs/skillNode" },
+    { "$ref": "#/$defs/conditionNode" },
+    { "$ref": "#/$defs/outputNode" },
+    { "$ref": "#/$defs/agentNode" }
+  ],
+  "$defs": {
+    "nodeType": {
+      "enum": [
+        "start",
+        "userInput",
+        "llm",
+        "rag",
+        "skill",
+        "condition",
+        "output",
+        "agent"
+      ]
+    },
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    },
+    "nodeBase": {
+      "type": "object",
+      "required": ["id", "type", "position", "data"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": { "$ref": "#/$defs/nodeType" },
+        "position": { "$ref": "#/$defs/position" },
+        "data": { "type": "object" }
+      }
+    },
+    "variable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "value"],
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "value": {}
+      }
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["variable", "operator", "value"],
+      "properties": {
+        "variable": { "type": "string", "minLength": 1 },
+        "operator": { "type": "string", "minLength": 1 },
+        "value": {}
+      }
+    },
+    "worker": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "name",
+        "description",
+        "systemPrompt",
+        "model",
+        "temperature",
+        "maxTokens",
+        "toolIds",
+        "knowledgeBaseIds",
+        "ragEnabled"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "systemPrompt": { "type": "string" },
+        "model": { "type": "string", "minLength": 1 },
+        "temperature": { "type": "number", "minimum": 0, "maximum": 2 },
+        "maxTokens": { "type": "integer", "minimum": 1 },
+        "toolIds": { "type": "array", "items": { "type": "string" } },
+        "knowledgeBaseIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "ragEnabled": { "type": "boolean" }
+      }
+    },
+    "startData": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["label", "variables"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "variables": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/variable" }
+        }
+      }
+    },
+    "userInputData": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["label", "inputField"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "inputField": { "type": "string", "minLength": 1 }
+      }
+    },
+    "llmData": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "label",
+        "model",
+        "systemPrompt",
+        "userPrompt",
+        "temperature",
+        "maxTokens"
+      ],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "model": { "type": "string", "minLength": 1 },
+        "systemPrompt": { "type": "string" },
+        "userPrompt": { "type": "string" },
+        "temperature": { "type": "number", "minimum": 0, "maximum": 2 },
+        "maxTokens": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "ragData": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "label",
+        "knowledgeBaseId",
+        "query",
+        "topK",
+        "similarityThreshold"
+      ],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "knowledgeBaseId": { "type": "string", "minLength": 1 },
+        "query": { "type": "string" },
+        "topK": { "type": "integer", "minimum": 1 },
+        "similarityThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "skillData": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["label", "skillId", "skillType", "parameters"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "skillId": { "type": "string", "minLength": 1 },
+        "skillType": { "enum": ["builtin", "custom"] },
+        "parameters": { "type": "object" }
+      }
+    },
+    "conditionData": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["label", "conditions"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "conditions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/condition" }
+        }
+      }
+    },
+    "outputData": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["label", "outputValue"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "outputValue": {}
+      }
+    },
+    "agentData": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "label",
+        "agentMode",
+        "strategy",
+        "model",
+        "systemPrompt",
+        "userPrompt",
+        "temperature",
+        "maxTokens",
+        "maxIterations",
+        "toolIds",
+        "knowledgeBaseIds",
+        "ragEnabled",
+        "memoryEnabled",
+        "memoryWindowSize"
+      ],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "agentMode": { "enum": ["single", "supervisor"] },
+        "strategy": {
+          "enum": ["react", "plan-and-execute", "reflection"]
+        },
+        "model": { "type": "string", "minLength": 1 },
+        "systemPrompt": { "type": "string" },
+        "userPrompt": { "type": "string" },
+        "temperature": { "type": "number", "minimum": 0, "maximum": 2 },
+        "maxTokens": { "type": "integer", "minimum": 1 },
+        "maxIterations": { "type": "integer", "minimum": 1 },
+        "toolIds": { "type": "array", "items": { "type": "string" } },
+        "knowledgeBaseIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "ragEnabled": { "type": "boolean" },
+        "memoryEnabled": { "type": "boolean" },
+        "memoryWindowSize": { "type": "integer", "minimum": 1 },
+        "supervisorPrompt": { "type": "string" },
+        "workers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/worker" }
+        }
+      }
+    },
+    "startNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "properties": {
+            "type": { "const": "start" },
+            "data": { "$ref": "#/$defs/startData" }
+          }
+        }
+      ]
+    },
+    "userInputNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "properties": {
+            "type": { "const": "userInput" },
+            "data": { "$ref": "#/$defs/userInputData" }
+          }
+        }
+      ]
+    },
+    "llmNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "properties": {
+            "type": { "const": "llm" },
+            "data": { "$ref": "#/$defs/llmData" }
+          }
+        }
+      ]
+    },
+    "ragNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "properties": {
+            "type": { "const": "rag" },
+            "data": { "$ref": "#/$defs/ragData" }
+          }
+        }
+      ]
+    },
+    "skillNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "properties": {
+            "type": { "const": "skill" },
+            "data": { "$ref": "#/$defs/skillData" }
+          }
+        }
+      ]
+    },
+    "conditionNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "properties": {
+            "type": { "const": "condition" },
+            "data": { "$ref": "#/$defs/conditionData" }
+          }
+        }
+      ]
+    },
+    "outputNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "properties": {
+            "type": { "const": "output" },
+            "data": { "$ref": "#/$defs/outputData" }
+          }
+        }
+      ]
+    },
+    "agentNode": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "properties": {
+            "type": { "const": "agent" },
+            "data": { "$ref": "#/$defs/agentData" }
+          }
+        }
+      ]
+    }
+  }
+}

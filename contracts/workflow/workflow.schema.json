@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://flowai.studio/contracts/workflow/workflow.schema.json",
+  "title": "FlowAI Studio Workflow",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["id", "name", "nodes", "edges"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "applicationId": { "type": "string", "minLength": 1 },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "node-types.schema.json" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/edge" }
+    },
+    "variables": { "type": "object" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "edge": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "source", "target"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "minLength": 1 },
+        "sourceHandle": { "type": "string" },
+        "targetHandle": { "type": "string" },
+        "label": { "type": "string" }
+      }
+    }
+  }
+}

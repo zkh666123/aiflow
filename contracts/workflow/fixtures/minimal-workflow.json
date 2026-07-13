@@ -1,0 +1,71 @@
+{
+  "id": "workflow-minimal",
+  "name": "Minimal condition workflow",
+  "nodes": [
+    {
+      "id": "start-1",
+      "type": "start",
+      "position": { "x": 0, "y": 0 },
+      "data": {
+        "label": "Start",
+        "variables": [
+          { "key": "question", "value": "" }
+        ]
+      }
+    },
+    {
+      "id": "user-input-1",
+      "type": "userInput",
+      "position": { "x": 180, "y": 0 },
+      "data": {
+        "label": "User Input",
+        "inputField": "question"
+      }
+    },
+    {
+      "id": "condition-1",
+      "type": "condition",
+      "position": { "x": 360, "y": 0 },
+      "data": {
+        "label": "Has question",
+        "conditions": [
+          {
+            "variable": "question",
+            "operator": "not_empty",
+            "value": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "output-1",
+      "type": "output",
+      "position": { "x": 540, "y": 0 },
+      "data": {
+        "label": "Output",
+        "outputValue": "{{question}}"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "source": "start-1",
+      "target": "user-input-1"
+    },
+    {
+      "id": "edge-2",
+      "source": "user-input-1",
+      "target": "condition-1"
+    },
+    {
+      "id": "edge-3",
+      "source": "condition-1",
+      "target": "output-1",
+      "sourceHandle": "true"
+    }
+  ],
+  "variables": {
+    "question": ""
+  }
+}
