@@ -2,13 +2,23 @@
 
 **Date:** 2026-07-13
 
-**Status:** Approved by the user-provided migration goal
+**Status:** Approved migration design, revised for the native local runtime
 
 ## 1. Goal
 
-Replace the NestJS monolith with a Go control plane, a Python AI runtime, and a Python container sandbox while preserving the React frontend, the public `/api/**` surface, response envelopes, SSE behavior, and all frontend-visible product capabilities.
+Replace the NestJS monolith with a Go control plane, a Python AI runtime, and a Python WASI sandbox while preserving the React frontend, the public `/api/**` surface, response envelopes, SSE behavior, and all frontend-visible product capabilities.
 
-The final runtime stack is React/TypeScript + Go + Python. NestJS, Prisma, `vm2`, and the Node backend image are removed only after compatibility and end-to-end acceptance are proven.
+The final runtime stack is React/TypeScript + Go + Python. NestJS, Prisma, `vm2`, the Node backend runtime, and the legacy Compose file are removed only after compatibility and end-to-end acceptance are proven.
+
+### 1.1 Local Runtime Decisions
+
+The user selected a native local development model after the original design was written:
+
+- Go 1.26 and Python 3.13 run as native Windows processes.
+- PostgreSQL 16 with pgvector and Redis 7 run in the existing WSL environment and are reached through `127.0.0.1`.
+- Docker and Docker Compose are not runtime or test dependencies.
+- PostgreSQL remains the database because the target RAG design requires pgvector and PostgreSQL full-text search; the installed MySQL instance is not used by the migration.
+- Python code nodes run inside a CPython 3.13 WASI guest hosted by Wasmtime. The Go and native Python processes never execute user code directly.
 
 ## 2. Current-State Evidence
 
@@ -47,7 +57,7 @@ Known conflicts have the following canonical decisions:
 
 ### 4.1 Vertical Strangler Migration - Selected
 
-Run the old and new backends in parallel. Put route ownership behind a single frontend-facing proxy, move one business capability at a time to Go, and keep NestJS as an executable compatibility oracle until the corresponding contract suite passes against Go.
+Run the old and new backends as parallel native processes. Put route ownership behind the frontend development proxy during migration, move one business capability at a time to Go, and keep NestJS as an executable compatibility oracle until the corresponding contract suite passes against Go. The final frontend proxy points every `/api/**` route to Go.
 
 This approach matches the requested deployment model, limits the blast radius, and produces independently testable increments.
 
@@ -63,20 +73,20 @@ Let Go, Python, and NestJS mutate the same tables during migration. This conflic
 
 ```mermaid
 flowchart LR
-    Web["React frontend"] --> Proxy["Frontend Nginx / API router"]
-    Proxy --> Go["Go control plane"]
+    Web["React frontend"] --> Proxy["Vite development proxy"]
+    Proxy --> Go["Go control plane on Windows"]
     Proxy -. temporary legacy routes .-> Nest["NestJS compatibility oracle"]
-    Go --> ControlDB["PostgreSQL control schema"]
-    Go --> Redis["Redis"]
+    Go --> ControlDB["WSL PostgreSQL control schema"]
+    Go --> Redis["WSL Redis"]
     Go -->|"authenticated gRPC"| AI["Python AI runtime"]
-    AI --> AIDB["PostgreSQL ai schema + pgvector"]
+    AI --> AIDB["WSL PostgreSQL ai schema + pgvector"]
     AI --> Redis
-    AI -->|"internal HTTP or gRPC"| Sandbox["Python sandbox manager"]
-    Sandbox --> Docker["Docker Engine"]
-    Docker --> Job["one-shot restricted Python container"]
+    AI -->|"authenticated loopback gRPC"| Sandbox["Python sandbox manager"]
+    Sandbox --> Wasmtime["Wasmtime host"]
+    Wasmtime --> Guest["one-shot CPython 3.13 WASI guest"]
 ```
 
-The frontend only addresses the proxy and Go-compatible `/api/**` endpoints. Python and sandbox services have no host-published ports in Compose.
+The frontend only addresses the Vite proxy and Go-compatible `/api/**` endpoints. Python and sandbox listeners bind to loopback addresses only, reject unauthenticated calls, and are never referenced by frontend code. PowerShell scripts start, stop, and health-check the native processes in dependency order.
 
 ## 6. Repository Layout
 
@@ -106,7 +116,8 @@ flowai-studio-ai-runtime/
 
 flowai-studio-sandbox/
   src/aiflow_sandbox/api/
-  src/aiflow_sandbox/docker/
+  src/aiflow_sandbox/runtime/
+  src/aiflow_sandbox/wasi/
   src/aiflow_sandbox/calculator/
   tests/
 
@@ -130,12 +141,12 @@ Generated Protobuf sources are placed in language-specific generated directories
 ### 6.1 Technology Baseline
 
 - Control plane: Go, Gin, pgx, sqlc, goose, go-redis, gRPC-Go, and a bounded LRU implementation.
-- AI runtime: Python 3.12, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic, grpcio, LangGraph, pytest, and uv.
-- Sandbox manager: Python 3.12, FastAPI, Pydantic v2, Docker SDK for Python, pytest, and uv.
+- AI runtime: Python 3.13, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic, grpcio, LangGraph, pytest, and uv.
+- Sandbox manager: Python 3.13, Pydantic v2, grpcio, wasmtime-py, pytest, and uv; its CPython 3.13 WASI guest is built with the official CPython WASI tooling.
 - Contracts: Protobuf edition supported by the selected Buf toolchain, Buf lint/breaking checks, and generated Go/Python stubs.
-- Infrastructure: PostgreSQL 16 with pgvector, Redis 7, Docker Compose, and Nginx.
+- Infrastructure: PostgreSQL 16 with pgvector and Redis 7 in WSL, native Windows Go/Python processes, the Vite development proxy, and PowerShell lifecycle scripts.
 
-Exact dependency versions are locked in `go.mod`/`go.sum`, `uv.lock`, generated-code tool manifests, and container image tags. Floating production tags such as `latest` are prohibited.
+Exact dependency versions are locked in `go.mod`/`go.sum`, `uv.lock`, generated-code tool manifests, and bootstrap tool manifests. Downloaded or locally built runtime artifacts are checksum-verified; floating tool versions are prohibited.
 
 ## 7. Ownership Boundaries
 
@@ -165,7 +176,7 @@ Python owns:
 
 ### 7.3 Python Sandbox Manager
 
-The sandbox manager owns lifecycle management for one-shot Python execution containers and AST-based calculator evaluation. It does not own business data.
+The sandbox manager owns lifecycle management for one-shot CPython WASI instances and AST-based calculator evaluation. It does not own business data, receive database credentials, or expose a public listener.
 
 ### 7.4 Cross-Service Data Rule
 
@@ -183,7 +194,7 @@ PostgreSQL uses separate roles in addition to separate schemas:
 - `flowai_ai`: `USAGE` and DML on `ai`, no DML on `control`.
 - Migration roles are separate from runtime roles.
 
-Goose initializes `control`; Alembic initializes `ai`. A Compose bootstrap script creates extensions, roles, and schemas before either application migrates.
+Goose initializes `control`; Alembic initializes `ai`. An idempotent PowerShell/`psql` bootstrap creates the database, extensions, roles, and schemas before either application migrates. Runtime role passwords stay in ignored local environment files and are never embedded in migrations or startup scripts.
 
 Control entities include users, teams, team members, applications, team applications, shares, workflows, workflow versions, executions, traces, spans, and API keys. AI entities include knowledge bases, documents, document chunks, embeddings, MCP servers/tool catalogs, ingestion jobs, and token usage records.
 
@@ -218,7 +229,7 @@ Services are versioned under `aiflow.v1`:
 
 Every request carries service authentication metadata, request ID, trace ID, caller, deadline, and idempotency key when the operation mutates state. Go propagates client cancellation and deadlines to Python. Python checks cancellation between model/tool/retrieval steps and closes provider streams promptly.
 
-The service token is read from a Docker secret or environment variable, compared in constant time, and never logged. Token rotation supports a current and previous token during a bounded overlap.
+The service token is read from an ignored environment file or process environment, compared in constant time, and never logged. Token rotation supports a current and previous token during a bounded overlap.
 
 ## 11. Workflow Execution
 
@@ -295,25 +306,35 @@ Token usage records buffer in memory and flush at 100 records or 10 seconds, whi
 
 ## 15. Sandbox Security
 
-The sandbox manager is the only service allowed to access the Docker Engine socket. Each execution creates a disposable container with:
+The sandbox manager embeds Wasmtime and creates a fresh `Store` and CPython 3.13 WASI instance for every execution. CPython documents WASI as a supported WebAssembly target and provides `Tools/wasm/wasi.py` for Python 3.13 cross-builds. Wasmtime documents WebAssembly memory isolation and capability-based WASI filesystem access. The Python binding exposes fuel, epoch deadlines, and store resource limits.
 
-- A non-root user and no privilege escalation.
-- Read-only root filesystem and bounded writable tmpfs.
-- No network.
-- CPU, memory, PID, wall-clock, and output limits.
-- All Linux capabilities dropped.
-- A restrictive seccomp profile.
-- No host mounts, Docker socket, secrets, or service credentials.
-- Forced removal after success, failure, cancellation, or timeout.
+Each execution applies all of the following boundaries:
+
+- A checksum-verified CPython 3.13 WASI module and a fixed, minimal standard-library bundle.
+- No inherited environment, host arguments, preopened directories, network capability, host secrets, or service credentials.
+- Explicit guest arguments supplied by the manager without invoking a shell.
+- Wasmtime linear-memory, table, instance, and module limits.
+- Fuel accounting plus epoch interruption for deterministic CPU and wall-clock termination.
+- A bounded stdout/stderr sink that aborts execution when the output limit is exceeded.
+- One store per request, discarded after success, failure, cancellation, timeout, or resource exhaustion.
+- A narrow result contract containing exit status, captured output, duration, and a stable failure code; Wasmtime traps and host internals are not returned verbatim.
 
 Go and the AI runtime never call `exec`, `eval`, a shell, or a user-supplied command. Calculator expressions use a Python AST whitelist and execute without the general sandbox.
+
+Authoritative implementation references:
+
+- CPython WASI build guide: https://devguide.python.org/getting-started/setup-building/#wasi
+- CPython 3.13 WebAssembly notes: https://github.com/python/cpython/blob/3.13/Tools/wasm/README.md
+- Wasmtime sandbox and filesystem security model: https://github.com/bytecodealliance/wasmtime/blob/main/docs/security.md
+- wasmtime-py store limits, fuel, and epoch API: https://github.com/bytecodealliance/wasmtime-py/blob/main/wasmtime/_store.py
+- wasmtime-py WASI capability configuration: https://github.com/bytecodealliance/wasmtime-py/blob/main/wasmtime/_wasi.py
 
 ## 16. Migration Subprojects
 
 The objective is implemented as independently testable subprojects:
 
 1. Contract baseline and compatibility harness.
-2. Buf/gRPC contracts, Compose infrastructure, schemas, and service skeletons.
+2. Buf/gRPC contracts, native process bootstrap, schemas, and service skeletons.
 3. Go identity, applications, teams, API keys, shares, RBAC, and response compatibility.
 4. Go workflows, templates, versions, traces, DAG engine, SSE, Redis controls, and cache.
 5. Python providers, Agent runtime, RAG, documents, MCP, and token usage.
@@ -331,7 +352,7 @@ Tests are organized by evidence type:
 - gRPC contract tests: authentication, streaming order, error mapping, cancellation, deadlines, upload interruption, and idempotency.
 - HTTP compatibility tests: every manifest route, request validation, status, envelope, field naming, pagination, and compatibility aliases.
 - SSE tests: event ordering, heartbeat, agent trace, disconnect cancellation, and terminal uniqueness.
-- Docker integration tests: schema permissions, pgvector, Redis scripts, health checks, internal-only ports, sandbox resource limits, and blocked network access.
+- Native integration tests: WSL PostgreSQL/pgvector and Redis availability, schema permissions, PowerShell process lifecycle, loopback-only internal listeners, health checks, sandbox resource limits, and blocked network/filesystem access.
 - Frontend E2E: login, all eight nodes, streaming execution, RAG upload/retrieval, Agent tools, version rollback, trace display, and team permissions.
 
 Tests that require provider credentials are separated from deterministic compatibility tests and use explicit opt-in markers. Default CI uses provider fakes and local fixtures.
@@ -344,10 +365,10 @@ The goal is complete only when all of the following evidence exists:
 
 - All public route manifest entries are implemented and passing.
 - The React production build succeeds without feature removal.
-- Go, Python, gRPC, SSE, sandbox, Docker integration, and frontend E2E suites pass.
-- Compose exposes only frontend, Go, PostgreSQL, and Redis host ports as intentionally configured; Python and sandbox are internal.
-- Compose no longer contains NestJS.
-- `flowai-studio-backend/`, Prisma migrations/client dependencies, `vm2`, and the Node backend image are absent.
+- Go, Python, gRPC, SSE, sandbox, native integration, and frontend E2E suites pass.
+- The supported PowerShell startup path exposes only the frontend and Go public endpoints; Python and sandbox bind to authenticated loopback endpoints.
+- Native startup scripts no longer start NestJS, and the legacy Compose file is removed.
+- `flowai-studio-backend/`, Prisma migrations/client dependencies, `vm2`, and Node backend runtime dependencies are absent.
 - No Go or Python runtime path directly executes user commands outside the sandbox.
 - README, architecture documentation, startup commands, and technology packaging describe the final stack accurately.
 
@@ -355,6 +376,6 @@ The goal is complete only when all of the following evidence exists:
 
 - Preserving existing database contents.
 - Supporting JavaScript code nodes.
-- Introducing Java or Kubernetes.
+- Introducing Java, Docker, Docker Compose, or Kubernetes.
 - Allowing Python to replace the platform DAG scheduler.
 - Retaining Qdrant or Milvus as required deployment dependencies for this migration.

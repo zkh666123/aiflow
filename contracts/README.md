@@ -91,4 +91,4 @@ node scripts/contracts/check-contracts.cjs
 
 每个 Go 路由完成后，应以 `http/routes.json` 中对应条目建立兼容测试，并记录该路由的迁移所有者和通过状态。涉及 AI、RAG、Agent、Skill 的 Handler 还必须验证 Go 到 Python 的 gRPC 错误映射与取消传播。
 
-NestJS 只能在全部路由、SSE、Docker 集成和前端 E2E 验收完成后删除。删除旧后端前，需要把 AST 提取工具对 TypeScript 的依赖迁移到独立工具锁定文件，避免继续依赖 `flowai-studio-backend/node_modules`。
+NestJS 只能在全部路由、SSE、本机进程集成和前端 E2E 验收完成后删除。最终运行方式为 Windows 原生 Go/Python 进程加 WSL PostgreSQL/Redis，不依赖 Docker。删除旧后端前，需要把 AST 提取工具对 TypeScript 的依赖迁移到独立工具锁定文件，避免继续依赖 `flowai-studio-backend/node_modules`。

@@ -475,7 +475,7 @@ Expected: all contract tests pass and no whitespace errors exist in the phase co
 
 - [x] **Step 3: Record the next plan boundary**
 
-The next implementation plan is `Buf/gRPC contracts, Compose infrastructure, schemas, and service skeletons`. Do not scaffold those services inside this contract-baseline phase.
+The next implementation plan is `Buf/gRPC contracts, native process bootstrap, schemas, and service skeletons`. Do not scaffold those services inside this contract-baseline phase.
 
 ## Completion Record
 
@@ -485,4 +485,4 @@ The next implementation plan is `Buf/gRPC contracts, Compose infrastructure, sch
 - Reviewed compatibility rules: 2, covering every current gap with no stale rule.
 - Canonical workflow types: 8.
 - Canonical SSE event types: 6.
-- Next phase boundary: Buf/gRPC contracts, Compose infrastructure, `control`/`ai` schema initialization, and minimal Go/Python/sandbox service skeletons.
+- Next phase boundary: Buf/gRPC contracts, native PowerShell process bootstrap, `control`/`ai` schema initialization, and minimal Go/Python/WASI sandbox service skeletons.
