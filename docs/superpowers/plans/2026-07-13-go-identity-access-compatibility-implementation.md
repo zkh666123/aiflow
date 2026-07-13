@@ -215,18 +215,22 @@ Run `go test ./internal/httpapi ./internal/auth`, `go vet ./...`, and `git diff 
 - Create: `flowai-studio-control-plane/internal/auth/service.go`
 - Create: `flowai-studio-control-plane/internal/auth/service_test.go`
 - Create: `flowai-studio-control-plane/internal/store/user_repository.go`
+- Create: `flowai-studio-control-plane/internal/store/user_repository_test.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/users.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/users_test.go`
+- Modify: `flowai-studio-control-plane/internal/httpapi/router.go`
+- Modify: `flowai-studio-control-plane/cmd/api/main.go`
+- Create: `scripts/native/user-contracts.test.ps1`
 
-- [ ] **Step 1: Write failing Redis login-limiter tests**
+- [x] **Step 1: Write failing Redis login-limiter tests**
 
 Test five failures, remaining-attempt counts, 15-minute lock TTL, successful-login reset, lock expiry, and SHA-256-derived Redis keys that do not contain the username. The production limiter uses atomic Redis Lua scripts for check/fail/reset.
 
-- [ ] **Step 2: Write failing user-service tests**
+- [x] **Step 2: Write failing user-service tests**
 
 Cover registration validation, duplicate username conflict, bcrypt cost 12 hashes, invalid-user and invalid-password paths sharing the same 401 response, lockout before password work, successful reset, profile lookup, and profile updates that never expose `password_hash`.
 
-- [ ] **Step 3: Run focused tests and verify RED**
+- [x] **Step 3: Run focused tests and verify RED**
 
 Run:
 
@@ -236,11 +240,11 @@ go test ./internal/auth ./internal/httpapi -run 'Test(Login|Register|Profile|Lim
 
 Expected: FAIL because the user service and routes do not exist.
 
-- [ ] **Step 4: Implement user repository and service**
+- [x] **Step 4: Implement user repository and service**
 
 Use `bcrypt.GenerateFromPassword(..., 12)` and constant-time bcrypt comparison. Validate the username before querying. Return typed domain errors that map to 400, 401, 404, 409, or 500; do not expose whether an unknown username or password was wrong.
 
-- [ ] **Step 5: Add all four user routes**
+- [x] **Step 5: Add all four user routes**
 
 Register:
 
@@ -256,7 +260,7 @@ POST /api/users/login -> 201 {user:{id,username},token}
 
 Profile routes return 200 and require JWT. Register/profile responses include only `id`, `username`, optional `avatar`, and the legacy timestamp fields appropriate to each route.
 
-- [ ] **Step 6: Run tests and commit the user slice**
+- [x] **Step 6: Run tests and commit the user slice**
 
 Run all Go tests, `go vet ./...`, and a live register/login/profile smoke test. Commit only Task 3 files with message `feat: migrate user authentication to Go`.
 

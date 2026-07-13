@@ -7,10 +7,14 @@ import (
 	"net/http"
 	"os/signal"
 	"syscall"
+	"time"
 
+	controlauth "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/auth"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/config"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/grpcclient"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/httpapi"
+	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/store"
+	controlstore "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/store/sqlc"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
@@ -64,7 +68,21 @@ func main() {
 		"aiRuntime": grpcclient.NewAIHealthChecker(aiConnection, settings.GRPCToken),
 		"sandbox":   grpcclient.NewSandboxHealthChecker(sandboxConnection, settings.GRPCToken),
 	}
+	jwtService, err := controlauth.NewJWTService(settings.JWTSecret, settings.JWTExpiration, time.Now)
+	if err != nil {
+		log.Fatal("configure JWT service: ", err)
+	}
+	userRepository := store.NewUserRepository(controlstore.New(database))
+	userService, err := controlauth.NewService(
+		userRepository,
+		controlauth.NewLoginLimiter(redisClient),
+		jwtService,
+	)
+	if err != nil {
+		log.Fatal("configure user service: ", err)
+	}
 	router := httpapi.NewRouter(httpapi.NewHealthHandler(checks, settings.HealthTimeout))
+	httpapi.RegisterUserRoutes(router, httpapi.NewUserHandler(userService), jwtService)
 	server := &http.Server{
 		Addr:              settings.HTTPAddress,
 		Handler:           router,

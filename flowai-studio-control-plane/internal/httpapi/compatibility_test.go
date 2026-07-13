@@ -117,3 +117,19 @@ func TestRecoveryMiddlewareReturnsACompatibleInternalError(t *testing.T) {
 		t.Fatalf("panic detail leaked: %s", recorder.Body.String())
 	}
 }
+
+func TestNewRouterInstallsCompatibleRecovery(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := NewRouter(func(c *gin.Context) { c.Status(http.StatusNoContent) })
+	router.GET("/api/panic", func(*gin.Context) { panic("router secret detail") })
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/api/panic", nil))
+
+	if recorder.Code != http.StatusInternalServerError || !strings.Contains(recorder.Body.String(), `"code":"INTERNAL_ERROR"`) {
+		t.Fatalf("status = %d, body = %s", recorder.Code, recorder.Body.String())
+	}
+	if strings.Contains(recorder.Body.String(), "router secret detail") {
+		t.Fatalf("panic detail leaked: %s", recorder.Body.String())
+	}
+}

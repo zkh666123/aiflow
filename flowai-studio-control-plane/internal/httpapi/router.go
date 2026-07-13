@@ -11,7 +11,7 @@ const requestIDHeader = "X-Request-ID"
 
 func NewRouter(health gin.HandlerFunc) *gin.Engine {
 	router := gin.New()
-	router.Use(gin.Recovery(), requestIDMiddleware())
+	router.Use(RecoveryMiddleware(), requestIDMiddleware())
 	router.GET("/api/health", health)
 	return router
 }
