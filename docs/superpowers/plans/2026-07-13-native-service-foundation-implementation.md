@@ -373,21 +373,21 @@ Commit only Task 5 files with message `feat: add authenticated ai runtime skelet
 - Create: `flowai-studio-sandbox/tests/test_host_safety.py`
 - Generate: `flowai-studio-sandbox/uv.lock`
 
-- [ ] **Step 1: Write failing fail-closed sandbox tests**
+- [x] **Step 1: Write failing fail-closed sandbox tests**
 
 Tests must prove that a missing WASI module makes health `NOT_READY`, `ExecutePython` returns `FAILED_PRECONDITION`, wrong token returns `UNAUTHENTICATED`, a valid artifact requires an expected SHA-256 digest, and production source contains no imports or calls to `subprocess`, `os.system`, `eval`, `exec`, `shell=True`, or native Python code execution.
 
-- [ ] **Step 2: Run tests and confirm imports fail**
+- [x] **Step 2: Run tests and confirm imports fail**
 
 Run: `uv run --project flowai-studio-sandbox pytest flowai-studio-sandbox/tests -q`
 
 Expected: FAIL because the sandbox package does not exist.
 
-- [ ] **Step 3: Implement only the safe boundary**
+- [x] **Step 3: Implement only the safe boundary**
 
 The skeleton loads no guest code. It validates the configured `python.wasm` path and digest, binds only to `127.0.0.1:50052`, authenticates every RPC, and rejects execution until the later sandbox implementation phase supplies the verified CPython WASI artifact and resource-limited Wasmtime runner.
 
-- [ ] **Step 4: Lock dependencies and run tests**
+- [x] **Step 4: Lock dependencies and run tests**
 
 Pin Pydantic v2, pydantic-settings, grpcio 1.74.0, protobuf 6.31.1, wasmtime-py, and pytest through `uv.lock`.
 
@@ -401,7 +401,7 @@ uv run --project flowai-studio-sandbox python -m compileall -q flowai-studio-san
 
 Expected: all tests pass and the host-safety source scan finds no forbidden execution path.
 
-- [ ] **Step 5: Commit the sandbox skeleton**
+- [x] **Step 5: Commit the sandbox skeleton**
 
 Commit only Task 6 files with message `feat: add fail-closed wasi sandbox skeleton`.
 

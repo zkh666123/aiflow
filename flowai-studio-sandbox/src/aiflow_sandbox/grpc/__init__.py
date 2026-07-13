@@ -1,0 +1,1 @@
+"""Authenticated sandbox gRPC service."""
