@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "1.0",
+  "source": "frontend calls without a matching NestJS method/path",
+  "count": 11,
+  "gaps": [
+    {
+      "method": "DELETE",
+      "path": "/api/workflow/templates/:id",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+          "line": 168,
+          "expression": "`/workflow/templates/${id}`"
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/apps/:appId/share",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+          "line": 102,
+          "expression": "`/apps/${appId}/share`"
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflow/templates",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+          "line": 74,
+          "expression": "'/workflow/templates'"
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflow/templates/:id",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+          "line": 101,
+          "expression": "`/workflow/templates/${id}`"
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflow/templates/categories",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+          "line": 92,
+          "expression": "'/workflow/templates/categories'"
+        }
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/workflow/templates/:id",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+          "line": 123,
+          "expression": "`/workflow/templates/${id}`"
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/templates",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+          "line": 111,
+          "expression": "'/workflow/templates'"
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/templates/:id/archive",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+          "line": 141,
+          "expression": "`/workflow/templates/${id}/archive`"
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/templates/:id/import",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+          "line": 150,
+          "expression": "`/workflow/templates/${id}/import`"
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/templates/:id/publish",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+          "line": 132,
+          "expression": "`/workflow/templates/${id}/publish`"
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/templates/:id/rate",
+      "callSites": [
+        {
+          "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+          "line": 159,
+          "expression": "`/workflow/templates/${id}/rate`"
+        }
+      ]
+    }
+  ]
+}

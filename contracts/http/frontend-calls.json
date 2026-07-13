@@ -1,0 +1,658 @@
+{
+  "schemaVersion": "1.0",
+  "source": "current worktree React TypeScript sources",
+  "count": 93,
+  "calls": [
+    {
+      "method": "DELETE",
+      "path": "/api/api-keys/:keyId",
+      "expression": "`/api-keys/${keyId}`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 88
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/apps/:appId/share",
+      "expression": "`/apps/${appId}/share`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 110
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/apps/:id",
+      "expression": "`/apps/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/appSlice.ts",
+      "line": 97
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/mcp/servers/:id",
+      "expression": "`/mcp/servers/${id}`",
+      "source": "flowai-studio-frontend/src/pages/McpManager.tsx",
+      "line": 149
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/rag/documents/:documentId",
+      "expression": "`/rag/documents/${documentId}`",
+      "source": "flowai-studio-frontend/src/store/slices/ragSlice.ts",
+      "line": 159
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/rag/knowledge-bases/:id",
+      "expression": "`/rag/knowledge-bases/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/ragSlice.ts",
+      "line": 109
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/skill/:id",
+      "expression": "`/skill/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/skillSlice.ts",
+      "line": 82
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/teams/:teamId",
+      "expression": "`/teams/${teamId}`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 40
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/teams/:teamId/apps/:teamAppId",
+      "expression": "`/teams/${teamId}/apps/${teamAppId}`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 72
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/teams/:teamId/members/:memberId",
+      "expression": "`/teams/${teamId}/members/${memberId}`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 54
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/workflow/templates/:id",
+      "expression": "`/workflow/templates/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+      "line": 168
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/workflows/:id",
+      "expression": "`/workflows/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/workflowSlice.ts",
+      "line": 314
+    },
+    {
+      "method": "GET",
+      "path": "/api/api-keys",
+      "expression": "'/api-keys'",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 83
+    },
+    {
+      "method": "GET",
+      "path": "/api/apps",
+      "expression": "'/apps'",
+      "source": "flowai-studio-frontend/src/store/slices/appSlice.ts",
+      "line": 36
+    },
+    {
+      "method": "GET",
+      "path": "/api/apps/:appId/embed",
+      "expression": "`/apps/${appId}/embed`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 114
+    },
+    {
+      "method": "GET",
+      "path": "/api/apps/:appId/share",
+      "expression": "`/apps/${appId}/share`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 102
+    },
+    {
+      "method": "GET",
+      "path": "/api/apps/:id",
+      "expression": "`/apps/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/appSlice.ts",
+      "line": 50
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers",
+      "expression": "'/mcp/servers'",
+      "source": "flowai-studio-frontend/src/pages/McpManager.tsx",
+      "line": 81
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers/:server.id/tools",
+      "expression": "`/mcp/servers/${server.id}/tools`",
+      "source": "flowai-studio-frontend/src/pages/McpManager.tsx",
+      "line": 197
+    },
+    {
+      "method": "GET",
+      "path": "/api/rag/documents/:documentId/chunks",
+      "expression": "`/rag/documents/${documentId}/chunks`",
+      "source": "flowai-studio-frontend/src/store/slices/ragSlice.ts",
+      "line": 179
+    },
+    {
+      "method": "GET",
+      "path": "/api/rag/knowledge-bases",
+      "expression": "'/rag/knowledge-bases'",
+      "source": "flowai-studio-frontend/src/store/slices/ragSlice.ts",
+      "line": 49
+    },
+    {
+      "method": "GET",
+      "path": "/api/rag/knowledge-bases/:id",
+      "expression": "`/rag/knowledge-bases/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/ragSlice.ts",
+      "line": 61
+    },
+    {
+      "method": "GET",
+      "path": "/api/rate-limit/circuit-breakers",
+      "expression": "'/rate-limit/circuit-breakers'",
+      "source": "flowai-studio-frontend/src/utils/rateLimitApi.ts",
+      "line": 34
+    },
+    {
+      "method": "GET",
+      "path": "/api/rate-limit/config",
+      "expression": "'/rate-limit/config'",
+      "source": "flowai-studio-frontend/src/utils/rateLimitApi.ts",
+      "line": 24
+    },
+    {
+      "method": "GET",
+      "path": "/api/rate-limit/quota/:userId",
+      "expression": "`/rate-limit/quota/${userId}`",
+      "source": "flowai-studio-frontend/src/utils/rateLimitApi.ts",
+      "line": 29
+    },
+    {
+      "method": "GET",
+      "path": "/api/share/:shareLink",
+      "expression": "`/share/${shareLink}`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 118
+    },
+    {
+      "method": "GET",
+      "path": "/api/skill",
+      "expression": "'/skill'",
+      "source": "flowai-studio-frontend/src/store/slices/skillSlice.ts",
+      "line": 36
+    },
+    {
+      "method": "GET",
+      "path": "/api/skill/builtin/list",
+      "expression": "'/skill/builtin/list'",
+      "source": "flowai-studio-frontend/src/store/slices/skillSlice.ts",
+      "line": 109
+    },
+    {
+      "method": "GET",
+      "path": "/api/teams",
+      "expression": "'/teams'",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 28
+    },
+    {
+      "method": "GET",
+      "path": "/api/teams/:teamId",
+      "expression": "`/teams/${teamId}`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 32
+    },
+    {
+      "method": "GET",
+      "path": "/api/token-usage",
+      "expression": "'/token-usage'",
+      "source": "flowai-studio-frontend/src/utils/tokenUsageApi.ts",
+      "line": 66
+    },
+    {
+      "method": "GET",
+      "path": "/api/token-usage/cost-report",
+      "expression": "'/token-usage/cost-report'",
+      "source": "flowai-studio-frontend/src/utils/tokenUsageApi.ts",
+      "line": 78
+    },
+    {
+      "method": "GET",
+      "path": "/api/token-usage/model-ranking",
+      "expression": "'/token-usage/model-ranking'",
+      "source": "flowai-studio-frontend/src/utils/tokenUsageApi.ts",
+      "line": 88
+    },
+    {
+      "method": "GET",
+      "path": "/api/traces/:traceId",
+      "expression": "`/traces/${traceId}`",
+      "source": "flowai-studio-frontend/src/utils/traceApi.ts",
+      "line": 83
+    },
+    {
+      "method": "GET",
+      "path": "/api/traces/slow/list",
+      "expression": "'/traces/slow/list'",
+      "source": "flowai-studio-frontend/src/utils/traceApi.ts",
+      "line": 97
+    },
+    {
+      "method": "GET",
+      "path": "/api/traces/stats/overview",
+      "expression": "'/traces/stats/overview'",
+      "source": "flowai-studio-frontend/src/utils/traceApi.ts",
+      "line": 105
+    },
+    {
+      "method": "GET",
+      "path": "/api/traces/workflow/:workflowId",
+      "expression": "`/traces/workflow/${workflowId}`",
+      "source": "flowai-studio-frontend/src/utils/traceApi.ts",
+      "line": 89
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/profile",
+      "expression": "'/users/profile'",
+      "source": "flowai-studio-frontend/src/store/slices/userSlice.ts",
+      "line": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflow-dsl/:workflowId/export",
+      "expression": "`/workflow-dsl/${workflowId}/export`",
+      "source": "flowai-studio-frontend/src/utils/workflowDslApi.ts",
+      "line": 13
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflow/templates",
+      "expression": "'/workflow/templates'",
+      "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+      "line": 74
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflow/templates/:id",
+      "expression": "`/workflow/templates/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+      "line": 101
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflow/templates/categories",
+      "expression": "'/workflow/templates/categories'",
+      "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+      "line": 92
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/:id",
+      "expression": "`/workflows/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/workflowSlice.ts",
+      "line": 254
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/:workflowId",
+      "expression": "`/workflows/${workflowId}`",
+      "source": "flowai-studio-frontend/src/pages/Debug.tsx",
+      "line": 105
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/app/:appId",
+      "expression": "`/workflows/app/${appId}`",
+      "source": "flowai-studio-frontend/src/pages/Debug.tsx",
+      "line": 88
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/app/:appId",
+      "expression": "`/workflows/app/${appId}`",
+      "source": "flowai-studio-frontend/src/store/slices/workflowSlice.ts",
+      "line": 240
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/api-keys/:keyId/toggle",
+      "expression": "`/api-keys/${keyId}/toggle`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 92
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:appId/share",
+      "expression": "`/apps/${appId}/share`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 106
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:id",
+      "expression": "`/apps/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/appSlice.ts",
+      "line": 77
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:id/archive",
+      "expression": "`/apps/${id}/archive`",
+      "source": "flowai-studio-frontend/src/store/slices/appSlice.ts",
+      "line": 147
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:id/publish",
+      "expression": "`/apps/${id}/publish`",
+      "source": "flowai-studio-frontend/src/store/slices/appSlice.ts",
+      "line": 113
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:id/unarchive",
+      "expression": "`/apps/${id}/unarchive`",
+      "source": "flowai-studio-frontend/src/store/slices/appSlice.ts",
+      "line": 164
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:id/unpublish",
+      "expression": "`/apps/${id}/unpublish`",
+      "source": "flowai-studio-frontend/src/store/slices/appSlice.ts",
+      "line": 130
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/rag/knowledge-bases/:id",
+      "expression": "`/rag/knowledge-bases/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/ragSlice.ts",
+      "line": 91
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/teams/:teamId",
+      "expression": "`/teams/${teamId}`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 36
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/teams/:teamId/apps/:teamAppId",
+      "expression": "`/teams/${teamId}/apps/${teamAppId}`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 68
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/teams/:teamId/members/:memberId",
+      "expression": "`/teams/${teamId}/members/${memberId}`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 50
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/workflow/templates/:id",
+      "expression": "`/workflow/templates/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+      "line": 123
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/workflows/:id",
+      "expression": "`/workflows/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/workflowSlice.ts",
+      "line": 281
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/workflows/:id",
+      "expression": "`/workflows/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/workflowSlice.ts",
+      "line": 301
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/chat",
+      "expression": "'/api/ai/chat'",
+      "source": "flowai-studio-frontend/src/pages/Debug.tsx",
+      "line": 165
+    },
+    {
+      "method": "POST",
+      "path": "/api/api-keys",
+      "expression": "'/api-keys'",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 78
+    },
+    {
+      "method": "POST",
+      "path": "/api/apps",
+      "expression": "'/apps'",
+      "source": "flowai-studio-frontend/src/store/slices/appSlice.ts",
+      "line": 63
+    },
+    {
+      "method": "POST",
+      "path": "/api/apps/:appId/share",
+      "expression": "`/apps/${appId}/share`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 98
+    },
+    {
+      "method": "POST",
+      "path": "/api/mcp/servers",
+      "expression": "'/mcp/servers'",
+      "source": "flowai-studio-frontend/src/pages/McpManager.tsx",
+      "line": 137
+    },
+    {
+      "method": "POST",
+      "path": "/api/mcp/servers/:execServerId/tools/call",
+      "expression": "`/mcp/servers/${execServerId}/tools/call`",
+      "source": "flowai-studio-frontend/src/pages/McpManager.tsx",
+      "line": 242
+    },
+    {
+      "method": "POST",
+      "path": "/api/mcp/servers/:server.id/connect",
+      "expression": "`/mcp/servers/${server.id}/connect`",
+      "source": "flowai-studio-frontend/src/pages/McpManager.tsx",
+      "line": 160
+    },
+    {
+      "method": "POST",
+      "path": "/api/mcp/servers/:server.id/disconnect",
+      "expression": "`/mcp/servers/${server.id}/disconnect`",
+      "source": "flowai-studio-frontend/src/pages/McpManager.tsx",
+      "line": 178
+    },
+    {
+      "method": "POST",
+      "path": "/api/rag/documents/upload",
+      "expression": "'/rag/documents/upload'",
+      "source": "flowai-studio-frontend/src/store/slices/ragSlice.ts",
+      "line": 128
+    },
+    {
+      "method": "POST",
+      "path": "/api/rag/knowledge-bases",
+      "expression": "'/rag/knowledge-bases'",
+      "source": "flowai-studio-frontend/src/store/slices/ragSlice.ts",
+      "line": 74
+    },
+    {
+      "method": "POST",
+      "path": "/api/rag/retrieve",
+      "expression": "'/rag/retrieve'",
+      "source": "flowai-studio-frontend/src/store/slices/ragSlice.ts",
+      "line": 191
+    },
+    {
+      "method": "POST",
+      "path": "/api/rate-limit/circuit-breakers/:name/reset",
+      "expression": "`/rate-limit/circuit-breakers/${name}/reset`",
+      "source": "flowai-studio-frontend/src/utils/rateLimitApi.ts",
+      "line": 39
+    },
+    {
+      "method": "POST",
+      "path": "/api/skill",
+      "expression": "'/skill'",
+      "source": "flowai-studio-frontend/src/store/slices/skillSlice.ts",
+      "line": 48
+    },
+    {
+      "method": "POST",
+      "path": "/api/skill/:skillId/execute",
+      "expression": "`/skill/${skillId}/execute`",
+      "source": "flowai-studio-frontend/src/store/slices/skillSlice.ts",
+      "line": 97
+    },
+    {
+      "method": "POST",
+      "path": "/api/teams",
+      "expression": "'/teams'",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 24
+    },
+    {
+      "method": "POST",
+      "path": "/api/teams/:teamId/apps",
+      "expression": "`/teams/${teamId}/apps`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 64
+    },
+    {
+      "method": "POST",
+      "path": "/api/teams/:teamId/leave",
+      "expression": "`/teams/${teamId}/leave`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 58
+    },
+    {
+      "method": "POST",
+      "path": "/api/teams/:teamId/members",
+      "expression": "`/teams/${teamId}/members`",
+      "source": "flowai-studio-frontend/src/utils/teamApi.ts",
+      "line": 46
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/login",
+      "expression": "'/users/login'",
+      "source": "flowai-studio-frontend/src/store/slices/userSlice.ts",
+      "line": 128
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/register",
+      "expression": "'/users/register'",
+      "source": "flowai-studio-frontend/src/store/slices/userSlice.ts",
+      "line": 175
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow-dsl/import",
+      "expression": "'/workflow-dsl/import'",
+      "source": "flowai-studio-frontend/src/utils/workflowDslApi.ts",
+      "line": 52
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow-dsl/validate",
+      "expression": "'/workflow-dsl/validate'",
+      "source": "flowai-studio-frontend/src/utils/workflowDslApi.ts",
+      "line": 31
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/templates",
+      "expression": "'/workflow/templates'",
+      "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+      "line": 111
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/templates/:id/archive",
+      "expression": "`/workflow/templates/${id}/archive`",
+      "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+      "line": 141
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/templates/:id/import",
+      "expression": "`/workflow/templates/${id}/import`",
+      "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+      "line": 150
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/templates/:id/publish",
+      "expression": "`/workflow/templates/${id}/publish`",
+      "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+      "line": 132
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow/templates/:id/rate",
+      "expression": "`/workflow/templates/${id}/rate`",
+      "source": "flowai-studio-frontend/src/store/slices/templateSlice.ts",
+      "line": 159
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows",
+      "expression": "'/workflows'",
+      "source": "flowai-studio-frontend/src/store/slices/workflowSlice.ts",
+      "line": 267
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/:selectedWorkflowId/run/stream",
+      "expression": "`/api/workflows/${selectedWorkflowId}/run/stream`",
+      "source": "flowai-studio-frontend/src/pages/Debug.tsx",
+      "line": 277
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/:workflowId/run",
+      "expression": "`/workflows/${workflowId}/run`",
+      "source": "flowai-studio-frontend/src/store/slices/workflowSlice.ts",
+      "line": 141
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/:workflowId/run/stream",
+      "expression": "`/api/workflows/${workflowId}/run/stream`",
+      "source": "flowai-studio-frontend/src/store/slices/workflowSlice.ts",
+      "line": 154
+    },
+    {
+      "method": "PUT",
+      "path": "/api/mcp/servers/:editingServer.id",
+      "expression": "`/mcp/servers/${editingServer.id}`",
+      "source": "flowai-studio-frontend/src/pages/McpManager.tsx",
+      "line": 134
+    },
+    {
+      "method": "PUT",
+      "path": "/api/skill/:id",
+      "expression": "`/skill/${id}`",
+      "source": "flowai-studio-frontend/src/store/slices/skillSlice.ts",
+      "line": 65
+    }
+  ]
+}

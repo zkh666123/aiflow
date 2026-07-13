@@ -1,0 +1,1002 @@
+{
+  "schemaVersion": "1.0",
+  "source": "current worktree NestJS controllers",
+  "count": 112,
+  "routes": [
+    {
+      "method": "DELETE",
+      "path": "/api/api-keys/:keyId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/api-key.controller.ts",
+      "line": 70
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/apps/:appId/share",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/app-share.controller.ts",
+      "line": 63
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/apps/:id",
+      "guards": [
+        "JwtAuthGuard",
+        "PermissionGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/app.controller.ts",
+      "line": 56
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/mcp/servers/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/mcp/mcp.controller.ts",
+      "line": 74
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/rag/documents/:documentId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/rag/rag.controller.ts",
+      "line": 84
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/rag/knowledge-bases/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/rag/rag.controller.ts",
+      "line": 57
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/skill/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/skill/skill.controller.ts",
+      "line": 54
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/teams/:teamId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 68
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/teams/:teamId/apps/:teamAppId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 145
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/teams/:teamId/members/:memberId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 102
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/templates/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-template.controller.ts",
+      "line": 112
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/workflows/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/workflow.controller.ts",
+      "line": 68
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/workflows/:workflowId/versions/:version",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-version.controller.ts",
+      "line": 96
+    },
+    {
+      "method": "GET",
+      "path": "/api/ai/chat-histories",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/ai/ai.controller.ts",
+      "line": 59
+    },
+    {
+      "method": "GET",
+      "path": "/api/ai/chat-histories/:sessionId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/ai/ai.controller.ts",
+      "line": 50
+    },
+    {
+      "method": "GET",
+      "path": "/api/api-keys",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/api-key.controller.ts",
+      "line": 61
+    },
+    {
+      "method": "GET",
+      "path": "/api/apps",
+      "guards": [
+        "JwtAuthGuard",
+        "PermissionGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/app.controller.ts",
+      "line": 32
+    },
+    {
+      "method": "GET",
+      "path": "/api/apps/:appId/embed",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/app-share.controller.ts",
+      "line": 75
+    },
+    {
+      "method": "GET",
+      "path": "/api/apps/:id",
+      "guards": [
+        "JwtAuthGuard",
+        "PermissionGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/app.controller.ts",
+      "line": 37
+    },
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/app/health.controller.ts",
+      "line": 27
+    },
+    {
+      "method": "GET",
+      "path": "/api/health/cache-stats",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/app/health.controller.ts",
+      "line": 84
+    },
+    {
+      "method": "GET",
+      "path": "/api/llm/cost",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/agent/controllers/llm-model.controller.ts",
+      "line": 53
+    },
+    {
+      "method": "GET",
+      "path": "/api/llm/health",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/agent/controllers/llm-model.controller.ts",
+      "line": 44
+    },
+    {
+      "method": "GET",
+      "path": "/api/llm/models",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/agent/controllers/llm-model.controller.ts",
+      "line": 17
+    },
+    {
+      "method": "GET",
+      "path": "/api/llm/models/:modelId",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/agent/controllers/llm-model.controller.ts",
+      "line": 35
+    },
+    {
+      "method": "GET",
+      "path": "/api/llm/models/list",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/agent/controllers/llm-model.controller.ts",
+      "line": 26
+    },
+    {
+      "method": "GET",
+      "path": "/api/llm/ollama/discover",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/agent/controllers/llm-model.controller.ts",
+      "line": 70
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/mcp/mcp.controller.ts",
+      "line": 40
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/mcp/mcp.controller.ts",
+      "line": 46
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers/:id/tools",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/mcp/mcp.controller.ts",
+      "line": 105
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/tools",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/mcp/mcp.controller.ts",
+      "line": 124
+    },
+    {
+      "method": "GET",
+      "path": "/api/rag/documents/:documentId/chunks",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/rag/rag.controller.ts",
+      "line": 76
+    },
+    {
+      "method": "GET",
+      "path": "/api/rag/knowledge-bases",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/rag/rag.controller.ts",
+      "line": 35
+    },
+    {
+      "method": "GET",
+      "path": "/api/rag/knowledge-bases/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/rag/rag.controller.ts",
+      "line": 40
+    },
+    {
+      "method": "GET",
+      "path": "/api/rate-limit/circuit-breakers",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/rate-limit.controller.ts",
+      "line": 53
+    },
+    {
+      "method": "GET",
+      "path": "/api/rate-limit/config",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/rate-limit.controller.ts",
+      "line": 20
+    },
+    {
+      "method": "GET",
+      "path": "/api/rate-limit/quota/:userId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/rate-limit.controller.ts",
+      "line": 30
+    },
+    {
+      "method": "GET",
+      "path": "/api/share/:shareLink",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/team/controllers/app-share.controller.ts",
+      "line": 92
+    },
+    {
+      "method": "GET",
+      "path": "/api/skill",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/skill/skill.controller.ts",
+      "line": 29
+    },
+    {
+      "method": "GET",
+      "path": "/api/skill/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/skill/skill.controller.ts",
+      "line": 35
+    },
+    {
+      "method": "GET",
+      "path": "/api/skill/builtin/list",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/skill/skill.controller.ts",
+      "line": 14
+    },
+    {
+      "method": "GET",
+      "path": "/api/teams",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 44
+    },
+    {
+      "method": "GET",
+      "path": "/api/teams/:teamId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 49
+    },
+    {
+      "method": "GET",
+      "path": "/api/templates",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-template.controller.ts",
+      "line": 52
+    },
+    {
+      "method": "GET",
+      "path": "/api/templates/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-template.controller.ts",
+      "line": 64
+    },
+    {
+      "method": "GET",
+      "path": "/api/templates/categories",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-template.controller.ts",
+      "line": 58
+    },
+    {
+      "method": "GET",
+      "path": "/api/token-usage",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/agent/controllers/token-usage.controller.ts",
+      "line": 21
+    },
+    {
+      "method": "GET",
+      "path": "/api/token-usage/cost-report",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/agent/controllers/token-usage.controller.ts",
+      "line": 30
+    },
+    {
+      "method": "GET",
+      "path": "/api/token-usage/model-ranking",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/agent/controllers/token-usage.controller.ts",
+      "line": 39
+    },
+    {
+      "method": "GET",
+      "path": "/api/traces/:traceId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-trace.controller.ts",
+      "line": 16
+    },
+    {
+      "method": "GET",
+      "path": "/api/traces/slow/list",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-trace.controller.ts",
+      "line": 35
+    },
+    {
+      "method": "GET",
+      "path": "/api/traces/stats/overview",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-trace.controller.ts",
+      "line": 46
+    },
+    {
+      "method": "GET",
+      "path": "/api/traces/workflow/:workflowId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-trace.controller.ts",
+      "line": 24
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/profile",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/user/user.controller.ts",
+      "line": 29
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflow-dsl/:id/export",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-dsl.controller.ts",
+      "line": 38
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/workflow.controller.ts",
+      "line": 51
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/:id/running",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/workflow.controller.ts",
+      "line": 224
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/:workflowId/versions",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-version.controller.ts",
+      "line": 44
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/:workflowId/versions/:version",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-version.controller.ts",
+      "line": 70
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/:workflowId/versions/compare",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-version.controller.ts",
+      "line": 56
+    },
+    {
+      "method": "GET",
+      "path": "/api/workflows/app/:appId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/workflow.controller.ts",
+      "line": 43
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/api-keys/:keyId/toggle",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/api-key.controller.ts",
+      "line": 79
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:appId/share",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/app-share.controller.ts",
+      "line": 50
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:id",
+      "guards": [
+        "JwtAuthGuard",
+        "PermissionGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/app.controller.ts",
+      "line": 46
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:id/archive",
+      "guards": [
+        "JwtAuthGuard",
+        "PermissionGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/app.controller.ts",
+      "line": 83
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:id/publish",
+      "guards": [
+        "JwtAuthGuard",
+        "PermissionGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/app.controller.ts",
+      "line": 65
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:id/unarchive",
+      "guards": [
+        "JwtAuthGuard",
+        "PermissionGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/app.controller.ts",
+      "line": 92
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/apps/:id/unpublish",
+      "guards": [
+        "JwtAuthGuard",
+        "PermissionGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/app.controller.ts",
+      "line": 74
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/rag/knowledge-bases/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/rag/rag.controller.ts",
+      "line": 48
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/teams/:teamId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 58
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/teams/:teamId/apps/:teamAppId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 134
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/teams/:teamId/members/:memberId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 91
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/templates/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-template.controller.ts",
+      "line": 70
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/users/profile",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/user/user.controller.ts",
+      "line": 35
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/workflows/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/workflow.controller.ts",
+      "line": 59
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/chat",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/ai/ai.controller.ts",
+      "line": 40
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/run",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/ai/ai.controller.ts",
+      "line": 21
+    },
+    {
+      "method": "POST",
+      "path": "/api/ai/stream-run",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/ai/ai.controller.ts",
+      "line": 30
+    },
+    {
+      "method": "POST",
+      "path": "/api/api-keys",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/api-key.controller.ts",
+      "line": 47
+    },
+    {
+      "method": "POST",
+      "path": "/api/apps",
+      "guards": [
+        "JwtAuthGuard",
+        "PermissionGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/app.controller.ts",
+      "line": 24
+    },
+    {
+      "method": "POST",
+      "path": "/api/apps/:appId/share",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/app-share.controller.ts",
+      "line": 38
+    },
+    {
+      "method": "POST",
+      "path": "/api/mcp/servers",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/mcp/mcp.controller.ts",
+      "line": 23
+    },
+    {
+      "method": "POST",
+      "path": "/api/mcp/servers/:id/connect",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/mcp/mcp.controller.ts",
+      "line": 85
+    },
+    {
+      "method": "POST",
+      "path": "/api/mcp/servers/:id/disconnect",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/mcp/mcp.controller.ts",
+      "line": 94
+    },
+    {
+      "method": "POST",
+      "path": "/api/mcp/servers/:id/tools/call",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/mcp/mcp.controller.ts",
+      "line": 114
+    },
+    {
+      "method": "POST",
+      "path": "/api/rag/documents/upload",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/rag/rag.controller.ts",
+      "line": 66
+    },
+    {
+      "method": "POST",
+      "path": "/api/rag/knowledge-bases",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/rag/rag.controller.ts",
+      "line": 27
+    },
+    {
+      "method": "POST",
+      "path": "/api/rag/retrieve",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/rag/rag.controller.ts",
+      "line": 105
+    },
+    {
+      "method": "POST",
+      "path": "/api/rate-limit/circuit-breakers/:name/reset",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/app/rate-limit.controller.ts",
+      "line": 69
+    },
+    {
+      "method": "POST",
+      "path": "/api/skill",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/skill/skill.controller.ts",
+      "line": 20
+    },
+    {
+      "method": "POST",
+      "path": "/api/skill/:id/execute",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/skill/skill.controller.ts",
+      "line": 63
+    },
+    {
+      "method": "POST",
+      "path": "/api/teams",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 35
+    },
+    {
+      "method": "POST",
+      "path": "/api/teams/:teamId/apps",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 124
+    },
+    {
+      "method": "POST",
+      "path": "/api/teams/:teamId/leave",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 112
+    },
+    {
+      "method": "POST",
+      "path": "/api/teams/:teamId/members",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/team/controllers/team.controller.ts",
+      "line": 81
+    },
+    {
+      "method": "POST",
+      "path": "/api/templates",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-template.controller.ts",
+      "line": 46
+    },
+    {
+      "method": "POST",
+      "path": "/api/templates/:id/archive",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-template.controller.ts",
+      "line": 86
+    },
+    {
+      "method": "POST",
+      "path": "/api/templates/:id/import",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-template.controller.ts",
+      "line": 92
+    },
+    {
+      "method": "POST",
+      "path": "/api/templates/:id/publish",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-template.controller.ts",
+      "line": 80
+    },
+    {
+      "method": "POST",
+      "path": "/api/templates/:id/rate",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-template.controller.ts",
+      "line": 102
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/login",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/user/user.controller.ts",
+      "line": 24
+    },
+    {
+      "method": "POST",
+      "path": "/api/users/register",
+      "guards": [],
+      "source": "flowai-studio-backend/src/modules/user/user.controller.ts",
+      "line": 19
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow-dsl/import",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-dsl.controller.ts",
+      "line": 66
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflow-dsl/validate",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-dsl.controller.ts",
+      "line": 80
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/workflow.controller.ts",
+      "line": 35
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/:id/cancel/:executionId",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/workflow.controller.ts",
+      "line": 207
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/:id/run",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/workflow.controller.ts",
+      "line": 76
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/:id/run/stream",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/workflow.controller.ts",
+      "line": 121
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/:workflowId/versions",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-version.controller.ts",
+      "line": 31
+    },
+    {
+      "method": "POST",
+      "path": "/api/workflows/:workflowId/versions/:version/rollback",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/workflow/controllers/workflow-version.controller.ts",
+      "line": 83
+    },
+    {
+      "method": "PUT",
+      "path": "/api/mcp/servers/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/mcp/mcp.controller.ts",
+      "line": 55
+    },
+    {
+      "method": "PUT",
+      "path": "/api/skill/:id",
+      "guards": [
+        "JwtAuthGuard"
+      ],
+      "source": "flowai-studio-backend/src/modules/skill/skill.controller.ts",
+      "line": 44
+    }
+  ]
+}
