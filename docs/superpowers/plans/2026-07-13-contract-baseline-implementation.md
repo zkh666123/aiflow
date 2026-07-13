@@ -16,7 +16,7 @@
 - Create: `scripts/contracts/extract-contracts.cjs`
 - Test: `scripts/contracts/extract-contracts.test.cjs`
 
-- [ ] **Step 1: Write failing AST extraction tests**
+- [x] **Step 1: Write failing AST extraction tests**
 
 Create `scripts/contracts/extract-contracts.test.cjs` with focused source fixtures:
 
@@ -70,7 +70,7 @@ test('normalizes parameter names for route comparison', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests and verify they fail**
+- [x] **Step 2: Run the tests and verify they fail**
 
 Run:
 
@@ -80,7 +80,7 @@ node --test scripts/contracts/extract-contracts.test.cjs
 
 Expected: FAIL because `extract-contracts.cjs` does not exist.
 
-- [ ] **Step 3: Implement the extraction library**
+- [x] **Step 3: Implement the extraction library**
 
 Create `scripts/contracts/extract-contracts.cjs` with these exported functions:
 
@@ -235,7 +235,7 @@ module.exports = {
 };
 ```
 
-- [ ] **Step 4: Run the extraction tests**
+- [x] **Step 4: Run the extraction tests**
 
 Run:
 
@@ -245,7 +245,7 @@ node --test scripts/contracts/extract-contracts.test.cjs
 
 Expected: 3 tests pass.
 
-- [ ] **Step 5: Commit the extraction library only**
+- [x] **Step 5: Commit the extraction library only**
 
 Run:
 
@@ -264,7 +264,7 @@ git commit --only -m "test: add contract AST extraction" -- scripts/contracts/ex
 - Create: `contracts/http/known-gaps.json`
 - Test: `scripts/contracts/generate-contracts.test.cjs`
 
-- [ ] **Step 1: Write repository invariant tests**
+- [x] **Step 1: Write repository invariant tests**
 
 The tests run the generator into a temporary directory and assert:
 
@@ -275,13 +275,13 @@ assert.ok(result.calls.some((call) => call.path === '/api/workflow/templates'));
 assert.ok(result.gaps.some((gap) => gap.path === '/api/workflow/templates'));
 ```
 
-- [ ] **Step 2: Verify the generator test fails**
+- [x] **Step 2: Verify the generator test fails**
 
 Run `node --test scripts/contracts/generate-contracts.test.cjs`.
 
 Expected: FAIL because the generator does not exist.
 
-- [ ] **Step 3: Implement deterministic manifest generation**
+- [x] **Step 3: Implement deterministic manifest generation**
 
 `generate-contracts.cjs` must:
 
@@ -310,7 +310,7 @@ Known gaps must initially contain the two verified source conflicts:
 ]
 ```
 
-- [ ] **Step 4: Run generator tests and generate committed manifests**
+- [x] **Step 4: Run generator tests and generate committed manifests**
 
 Run:
 
@@ -321,7 +321,7 @@ node scripts/contracts/generate-contracts.cjs
 
 Expected: tests pass and the three generated JSON files are created.
 
-- [ ] **Step 5: Commit generator and HTTP contracts only**
+- [x] **Step 5: Commit generator and HTTP contracts only**
 
 Use `git commit --only` with the exact Task 2 files so pre-existing staged changes remain staged.
 
@@ -334,7 +334,7 @@ Use `git commit --only` with the exact Task 2 files so pre-existing staged chang
 - Create: `contracts/workflow/fixtures/minimal-workflow.json`
 - Test: `scripts/contracts/workflow-contracts.test.cjs`
 
-- [ ] **Step 1: Write failing schema invariant tests**
+- [x] **Step 1: Write failing schema invariant tests**
 
 Use Node assertions to verify:
 
@@ -344,7 +344,7 @@ Use Node assertions to verify:
 - DSL version is exactly `1.0` and kind is exactly `Workflow`.
 - The minimal fixture has valid node and edge references and no cycle.
 
-- [ ] **Step 2: Add complete JSON Schemas**
+- [x] **Step 2: Add complete JSON Schemas**
 
 `node-types.schema.json` defines shared `id`, `type`, `position`, and `data.label`, then uses `oneOf` for all eight node data shapes already present in `flowai-studio-frontend/src/types/index.ts`.
 
@@ -363,13 +363,13 @@ Use Node assertions to verify:
 
 `workflow-dsl.schema.json` defines version `1.0`, kind `Workflow`, metadata, and spec. It accepts both `userInput` and legacy `user-input` on input, while the fixture uses `userInput`.
 
-- [ ] **Step 3: Run workflow contract tests**
+- [x] **Step 3: Run workflow contract tests**
 
 Run `node --test scripts/contracts/workflow-contracts.test.cjs`.
 
 Expected: all tests pass.
 
-- [ ] **Step 4: Commit workflow contracts only**
+- [x] **Step 4: Commit workflow contracts only**
 
 Commit only the Task 3 files with message `test: freeze workflow contract schemas`.
 
@@ -382,7 +382,7 @@ Commit only the Task 3 files with message `test: freeze workflow contract schema
 - Create: `contracts/sse/valid-error-sequence.json`
 - Test: `scripts/contracts/sse-contracts.test.cjs`
 
-- [ ] **Step 1: Write failing SSE invariant tests**
+- [x] **Step 1: Write failing SSE invariant tests**
 
 Tests must reject sequences that:
 
@@ -392,19 +392,19 @@ Tests must reject sequences that:
 - Contain more than one terminal event.
 - Put `agent_trace` after terminal completion.
 
-- [ ] **Step 2: Add canonical response and event schemas**
+- [x] **Step 2: Add canonical response and event schemas**
 
 The response envelope requires `success`, `code`, `message`, `data`, and RFC 3339 `timestamp`; errors may add `path`.
 
 The SSE schema defines `workflow_start`, `node_status`, `agent_trace`, `heartbeat`, `done`, and `error`. `node_status.status` is limited to `running`, `retrying`, `success`, `skipped`, `timeout`, and `failed`.
 
-- [ ] **Step 3: Run SSE tests**
+- [x] **Step 3: Run SSE tests**
 
 Run `node --test scripts/contracts/sse-contracts.test.cjs`.
 
 Expected: valid fixtures pass and invalid inline fixtures are rejected.
 
-- [ ] **Step 4: Commit response and SSE contracts only**
+- [x] **Step 4: Commit response and SSE contracts only**
 
 Commit only Task 4 files with message `test: freeze response and SSE contracts`.
 
@@ -415,11 +415,11 @@ Commit only Task 4 files with message `test: freeze response and SSE contracts`.
 - Create: `contracts/README.md`
 - Test: all files under `scripts/contracts/*.test.cjs`
 
-- [ ] **Step 1: Implement the checker**
+- [x] **Step 1: Implement the checker**
 
 The checker regenerates manifests in a temporary directory, compares them byte-for-byte with committed generated files, validates known gaps, runs workflow/SSE invariants, and exits non-zero on drift.
 
-- [ ] **Step 2: Document provenance and commands**
+- [x] **Step 2: Document provenance and commands**
 
 `contracts/README.md` explains:
 
@@ -429,7 +429,7 @@ The checker regenerates manifests in a temporary directory, compares them byte-f
 - Commands to generate and check contracts.
 - Why current legacy build failures are recorded but not copied into the target behavior.
 
-- [ ] **Step 3: Run the complete contract suite**
+- [x] **Step 3: Run the complete contract suite**
 
 Run:
 
@@ -441,7 +441,7 @@ node scripts/contracts/check-contracts.cjs
 
 Expected: all tests pass, generated files are unchanged, route count is 112, and only documented compatibility gaps remain.
 
-- [ ] **Step 4: Verify scope and commit**
+- [x] **Step 4: Verify scope and commit**
 
 Run:
 
@@ -457,11 +457,11 @@ Commit only Task 5 files with message `test: add contract drift gate`.
 **Files:**
 - Modify: `docs/superpowers/plans/2026-07-13-contract-baseline-implementation.md`
 
-- [ ] **Step 1: Check off completed plan steps**
+- [x] **Step 1: Check off completed plan steps**
 
 Update each completed checkbox without changing the approved scope.
 
-- [ ] **Step 2: Run final phase verification**
+- [x] **Step 2: Run final phase verification**
 
 Run:
 
@@ -473,6 +473,16 @@ git diff --check HEAD~5..HEAD
 
 Expected: all contract tests pass and no whitespace errors exist in the phase commits.
 
-- [ ] **Step 3: Record the next plan boundary**
+- [x] **Step 3: Record the next plan boundary**
 
 The next implementation plan is `Buf/gRPC contracts, Compose infrastructure, schemas, and service skeletons`. Do not scaffold those services inside this contract-baseline phase.
+
+## Completion Record
+
+- Completed on 2026-07-13 on branch `codex/go-python-migration`.
+- Contract tests: 17 passed, 0 failed.
+- Generated baseline: 112 backend routes, 93 frontend calls, 11 compatibility gaps.
+- Reviewed compatibility rules: 2, covering every current gap with no stale rule.
+- Canonical workflow types: 8.
+- Canonical SSE event types: 6.
+- Next phase boundary: Buf/gRPC contracts, Compose infrastructure, `control`/`ai` schema initialization, and minimal Go/Python/sandbox service skeletons.
