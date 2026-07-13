@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package aiflow.v1;
+
+import "aiflow/v1/common.proto";
+
+option go_package = "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/gen/aiflow/v1;aiflowv1";
+
+service ModelService {
+  rpc ListModels(ListModelsRequest) returns (ListModelsResponse);
+  rpc HealthCheck(ModelServiceHealthCheckRequest) returns (ModelServiceHealthCheckResponse);
+}
+
+enum ModelCapability {
+  MODEL_CAPABILITY_UNSPECIFIED = 0;
+  MODEL_CAPABILITY_TEXT = 1;
+  MODEL_CAPABILITY_VISION = 2;
+  MODEL_CAPABILITY_TOOLS = 3;
+  MODEL_CAPABILITY_JSON = 4;
+  MODEL_CAPABILITY_EMBEDDING = 5;
+  MODEL_CAPABILITY_RERANKING = 6;
+}
+
+message ListModelsRequest {
+  RequestContext context = 1;
+  string provider = 2;
+  repeated ModelCapability required_capabilities = 3;
+  bool configured_only = 4;
+  bool healthy_only = 5;
+}
+
+message Model {
+  string provider = 1;
+  string model_id = 2;
+  string display_name = 3;
+  repeated ModelCapability capabilities = 4;
+  int32 context_window = 5;
+  HealthState health = 6;
+  string input_cost_per_million = 7;
+  string output_cost_per_million = 8;
+  bool configured = 9;
+}
+
+message ListModelsResponse {
+  repeated Model models = 1;
+}
+
+message ModelServiceHealthCheckRequest {
+  RequestContext context = 1;
+  bool include_details = 2;
+}
+
+message ModelServiceHealthCheckResponse {
+  HealthReport report = 1;
+}

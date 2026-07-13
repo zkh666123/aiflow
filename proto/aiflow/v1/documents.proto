@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package aiflow.v1;
+
+import "aiflow/v1/common.proto";
+
+option go_package = "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/gen/aiflow/v1;aiflowv1";
+
+service DocumentService {
+  rpc IngestDocument(stream IngestDocumentRequest) returns (IngestDocumentResponse);
+}
+
+message ChunkingOptions {
+  int32 chunk_size = 1;
+  int32 chunk_overlap = 2;
+}
+
+message IngestDocumentMetadata {
+  RequestContext context = 1;
+  string upload_id = 2;
+  string knowledge_base_id = 3;
+  string filename = 4;
+  string content_type = 5;
+  int64 size_bytes = 6;
+  string sha256 = 7;
+  ChunkingOptions chunking = 8;
+}
+
+message DocumentChunk {
+  int64 sequence = 1;
+  bytes data = 2;
+}
+
+message IngestDocumentRequest {
+  oneof frame {
+    IngestDocumentMetadata metadata = 1;
+    DocumentChunk chunk = 2;
+  }
+}
+
+enum IngestionState {
+  INGESTION_STATE_UNSPECIFIED = 0;
+  INGESTION_STATE_QUEUED = 1;
+  INGESTION_STATE_PROCESSING = 2;
+  INGESTION_STATE_COMPLETED = 3;
+  INGESTION_STATE_FAILED = 4;
+}
+
+message IngestDocumentResponse {
+  string upload_id = 1;
+  string document_id = 2;
+  string ingestion_job_id = 3;
+  IngestionState state = 4;
+  ServiceError error = 5;
+}

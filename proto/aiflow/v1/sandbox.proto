@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package aiflow.v1;
+
+import "aiflow/v1/common.proto";
+
+option go_package = "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/gen/aiflow/v1;aiflowv1";
+
+service SandboxService {
+  rpc ExecutePython(ExecutePythonRequest) returns (ExecutePythonResponse);
+  rpc HealthCheck(SandboxServiceHealthCheckRequest) returns (SandboxServiceHealthCheckResponse);
+}
+
+message SandboxLimits {
+  uint64 fuel = 1;
+  int64 timeout_millis = 2;
+  int64 memory_bytes = 3;
+  int64 output_bytes = 4;
+}
+
+message ExecutePythonRequest {
+  RequestContext context = 1;
+  string code = 2;
+  SandboxLimits limits = 3;
+}
+
+enum SandboxExecutionStatus {
+  SANDBOX_EXECUTION_STATUS_UNSPECIFIED = 0;
+  SANDBOX_EXECUTION_STATUS_SUCCEEDED = 1;
+  SANDBOX_EXECUTION_STATUS_FAILED = 2;
+  SANDBOX_EXECUTION_STATUS_TIMED_OUT = 3;
+  SANDBOX_EXECUTION_STATUS_CANCELLED = 4;
+  SANDBOX_EXECUTION_STATUS_RESOURCE_EXHAUSTED = 5;
+  SANDBOX_EXECUTION_STATUS_NOT_READY = 6;
+}
+
+enum SandboxFailureCode {
+  SANDBOX_FAILURE_CODE_UNSPECIFIED = 0;
+  SANDBOX_FAILURE_CODE_RUNTIME_MISSING = 1;
+  SANDBOX_FAILURE_CODE_RUNTIME_INVALID = 2;
+  SANDBOX_FAILURE_CODE_GUEST_ERROR = 3;
+  SANDBOX_FAILURE_CODE_TIMEOUT = 4;
+  SANDBOX_FAILURE_CODE_MEMORY_LIMIT = 5;
+  SANDBOX_FAILURE_CODE_OUTPUT_LIMIT = 6;
+  SANDBOX_FAILURE_CODE_CANCELLED = 7;
+  SANDBOX_FAILURE_CODE_INTERNAL = 8;
+}
+
+message ExecutePythonResponse {
+  SandboxExecutionStatus status = 1;
+  SandboxFailureCode failure_code = 2;
+  int32 exit_code = 3;
+  string stdout = 4;
+  string stderr = 5;
+  int64 duration_millis = 6;
+}
+
+message SandboxServiceHealthCheckRequest {
+  RequestContext context = 1;
+  bool include_details = 2;
+}
+
+message SandboxServiceHealthCheckResponse {
+  HealthReport report = 1;
+}

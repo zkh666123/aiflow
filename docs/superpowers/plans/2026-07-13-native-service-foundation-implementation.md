@@ -46,7 +46,7 @@ The existing NestJS and React trees remain available as compatibility evidence. 
 
 - [x] **Step 1: Write the failing toolchain contract test**
 
-The Node test must assert exact, non-floating versions for Buf, sqlc, goose, all four Buf plugins, Go, and Python. It must also assert that `check-environment.ps1` checks WSL PostgreSQL, pgvector, and Redis and contains no Docker command.
+The Node test must assert exact, non-floating versions for Buf, sqlc, goose, all five Buf plugins, Go, and Python. It must also assert that `check-environment.ps1` checks WSL PostgreSQL, pgvector, and Redis and contains no Docker command.
 
 ```javascript
 test('pins the native toolchain without Docker', () => {
@@ -82,6 +82,7 @@ Pin these tool versions:
     "protocolbuffers/go": "v1.36.10",
     "grpc/go": "v1.5.1",
     "protocolbuffers/python": "v31.1",
+    "protocolbuffers/pyi": "v31.1",
     "grpc/python": "v1.74.0"
   }
 }
@@ -135,7 +136,7 @@ Commit only Task 1 files with message `chore: pin native migration toolchain`.
 - Create: `proto/aiflow/v1/sandbox.proto`
 - Create: `scripts/proto/proto-contracts.test.cjs`
 
-- [ ] **Step 1: Write the failing protobuf invariant test**
+- [x] **Step 1: Write the failing protobuf invariant test**
 
 The test must inspect source files and assert:
 
@@ -152,13 +153,13 @@ assert.deepEqual(serviceMethods, {
 
 It must also require `RequestContext` fields for request ID, trace ID, caller, idempotency key, and deadline; require zero-valued `*_UNSPECIFIED` enum members; reject `google.protobuf.Any`; and verify that every service request carries `RequestContext` directly or through its first upload frame.
 
-- [ ] **Step 2: Run the test and confirm missing contract failures**
+- [x] **Step 2: Run the test and confirm missing contract failures**
 
 Run: `node --test scripts/proto/proto-contracts.test.cjs`
 
 Expected: FAIL because the protobuf files do not exist.
 
-- [ ] **Step 3: Add the Buf module and typed contracts**
+- [x] **Step 3: Add the Buf module and typed contracts**
 
 Use package `aiflow.v1`, this Go package option, and no JavaScript generation:
 
@@ -178,7 +179,7 @@ Contract rules:
 
 `buf.gen.yaml` must pin the four plugin versions from `toolchain/native-tools.json`, write Go code under `flowai-studio-control-plane/internal/gen`, and write Python code/stubs under `proto/python/src`.
 
-- [ ] **Step 4: Run source and Buf validation**
+- [x] **Step 4: Run source and Buf validation**
 
 Run:
 
@@ -190,7 +191,7 @@ buf build
 
 Expected: all commands pass with no lint findings.
 
-- [ ] **Step 5: Commit the protobuf source increment**
+- [x] **Step 5: Commit the protobuf source increment**
 
 Commit only Task 2 files with message `feat: define internal grpc contracts`.
 

@@ -33,6 +33,7 @@ test('pins the native toolchain without Docker', () => {
     'protocolbuffers/go': 'v1.36.10',
     'grpc/go': 'v1.5.1',
     'protocolbuffers/python': 'v31.1',
+    'protocolbuffers/pyi': 'v31.1',
     'grpc/python': 'v1.74.0',
   });
   assert.deepEqual(manifest.artifacts, {
