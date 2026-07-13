@@ -510,7 +510,7 @@ Commit only Task 8 files with message `feat: add native service lifecycle script
 - Modify: `docs/superpowers/plans/2026-07-13-native-service-foundation-implementation.md`
 - Modify: `README.md`
 
-- [ ] **Step 1: Run every deterministic suite**
+- [x] **Step 1: Run every deterministic suite**
 
 ```powershell
 node --test scripts/contracts/*.test.cjs
@@ -528,7 +528,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/check-service
 
 Run Go commands from `flowai-studio-control-plane`.
 
-- [ ] **Step 2: Verify repository and security boundaries**
+- [x] **Step 2: Verify repository and security boundaries**
 
 Run:
 
@@ -540,10 +540,24 @@ git status --short
 
 Expected: Docker/Compose are absent from the new runtime path; any `eval`/`exec` strings appear only in negative source-scan tests; real secrets and `.wasm` artifacts are untracked; the user's pre-existing staged files remain staged and unchanged.
 
-- [ ] **Step 3: Record completion and the next phase boundary**
+- [x] **Step 3: Record completion and the next phase boundary**
 
 Check off completed tasks and record exact versions, test counts, local addresses, database role assertions, and known fail-closed sandbox status. The next plan begins Go identity/app/team/RBAC compatibility routes; it must not claim Python code execution until the CPython WASI artifact and Wasmtime resource-limit tests exist.
 
-- [ ] **Step 4: Commit phase documentation**
+- [x] **Step 4: Commit phase documentation**
 
 Commit only the plan and README changes with message `docs: record native foundation completion`.
+
+## Completion Record
+
+- Completed on 2026-07-13 on branch `codex/go-python-migration`.
+- Native runtimes: Go 1.26.4, Python 3.13.0, PostgreSQL 16.14, pgvector 0.8.5, and Redis 7.0.15.
+- Pinned tools: Buf 1.71.0, sqlc 1.31.1, and goose 3.27.2, installed from checksum-verified official Windows AMD64 releases.
+- Protobuf surface: seven source files, six authenticated services, deterministic Go/Python generation, and shared Python imports.
+- Deterministic tests: 24 Node tests (17 legacy contracts, 3 native-tool/process contracts, 4 protobuf contracts), 11 AI Runtime tests, 4 Sandbox tests, and 5 top-level Go tests with 2 loopback-address subtests; Buf lint/build and Go vet also pass.
+- Database boundary: `control` and `ai` schemas, separate migrator/runtime roles, runtime DML-only grants, cross-schema denial, idempotent bootstrap, Goose in `control`, and Alembic in `ai`.
+- Native addresses: Go `127.0.0.1:3001`, AI gRPC `127.0.0.1:50051`, Sandbox gRPC `127.0.0.1:50052`, PostgreSQL `127.0.0.1:5432`, and Redis `127.0.0.1:6379`.
+- Sandbox boundary: authenticated and loopback-only; missing or invalid CPython WASI artifacts produce `NOT_READY` and `FAILED_PRECONDITION`; no host execution path exists.
+- Known fail-closed state: no checksum-verified CPython 3.13 WASI artifact has been built yet, so the public Go health status is `degraded` solely because Sandbox is `not_ready`.
+- Known legacy build state: the React build still reports the pre-existing missing `@ant-design/plots`, `@ant-design/charts`, and `AgentTraceStep` errors; this phase did not modify those user-staged files.
+- Next phase boundary: Go identity, application, team, API key, share, and RBAC compatibility routes against the frozen HTTP manifest.

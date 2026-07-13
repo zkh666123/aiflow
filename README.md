@@ -1,5 +1,43 @@
 # FlowAI Studio
 
+## Go + Python 原生迁移环境（进行中）
+
+当前迁移分支已经建立 Go 控制面、Python AI Runtime、WASI 沙箱管理器、gRPC 契约和 PostgreSQL 双 schema 基础。旧 NestJS 后端仍作为兼容性参照保留，尚未进入最终删除阶段。
+
+本机运行方式不使用 Docker：
+
+- Go 1.26 和 Python 3.13 作为 Windows 原生进程运行。
+- PostgreSQL 16 + pgvector 0.8.5、Redis 7 在 WSL 中运行。
+- Go 对外监听 `127.0.0.1:3001`。
+- AI Runtime 和 Sandbox 仅监听认证的 loopback gRPC 端口 `50051`、`50052`。
+
+首次准备：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/install-tools.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/initialize-database.ps1
+```
+
+启动、检查和停止：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/start-services.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/check-services.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/stop-services.ps1
+```
+
+Go 健康接口：`http://127.0.0.1:3001/api/health`。
+
+迁移期间前端默认仍代理旧 NestJS `3000` 端口。切到 Go：
+
+```powershell
+$env:FLOWAI_BACKEND_TARGET='go'
+cd flowai-studio-frontend
+npm run dev
+```
+
+当前 Sandbox 会在缺少校验过的 CPython 3.13 WASI 产物时报告 `NOT_READY`，并拒绝执行代码。这是安全的 fail-closed 状态，不代表宿主 Python 会直接执行用户代码。
+
 FlowAI Studio 是一个先进的全栈可视化 AI 应用低代码编排平台。它旨在降低 AI 应用开发的门槛，使开发者和业务人员能够通过直观的拖拽式交互，快速构建、测试和部署复杂的 AI 工作流。
 
 ## 项目亮点
