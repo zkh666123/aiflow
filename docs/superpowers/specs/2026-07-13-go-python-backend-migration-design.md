@@ -128,6 +128,7 @@ proto/aiflow/v1/
   retrieval.proto
   mcp.proto
   models.proto
+  sandbox.proto
 
 contracts/
   http/
@@ -226,6 +227,7 @@ Services are versioned under `aiflow.v1`:
 - `RetrievalService.Retrieve`: unary retrieval request with vector, keyword, hybrid, and reranker options.
 - `McpService.ManageMcp`: typed operations for configure, connect, disconnect, discover, and call.
 - `ModelService.ListModels` and `ModelService.HealthCheck`: model capability, availability, and cost metadata.
+- `SandboxService.ExecutePython` and `SandboxService.HealthCheck`: authenticated, loopback-only Python execution requests and fail-closed WASI runtime readiness.
 
 Every request carries service authentication metadata, request ID, trace ID, caller, deadline, and idempotency key when the operation mutates state. Go propagates client cancellation and deadlines to Python. Python checks cancellation between model/tool/retrieval steps and closes provider streams promptly.
 
