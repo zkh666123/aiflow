@@ -19,6 +19,7 @@
 - Login locks a username after five failed attempts for 15 minutes. Attempt state is atomic in Redis and expires after one hour.
 - JWT payloads retain `userId` and `username`; tokens use HS256 and expire after seven days.
 - Global roles are `admin` and `member`; team roles are `owner`, `admin`, `editor`, and `viewer`; team application grants are `full_access`, `can_edit`, and `can_view`.
+- Any team member can read team details, matching the effective legacy `TeamService` behavior; viewer/editor receive `team:read` even though the unused legacy decorator matrix omitted it.
 - API keys contain 256 random bits, are shown once, and are stored as a display prefix plus HMAC-SHA256 digest. JWT, API-key HMAC, and gRPC secrets are distinct.
 - Share management remains application-owner-only. Team `full_access` does not grant share-setting ownership.
 - No legacy database data is copied. Goose creates a fresh schema and can roll the phase back cleanly.
@@ -272,12 +273,13 @@ Run all Go tests, `go vet ./...`, and a live register/login/profile smoke test. 
 - Create: `flowai-studio-control-plane/internal/rbac/authorizer.go`
 - Create: `flowai-studio-control-plane/internal/rbac/authorizer_test.go`
 - Create: `flowai-studio-control-plane/internal/store/access_repository.go`
+- Create: `flowai-studio-control-plane/internal/store/access_repository_test.go`
 
-- [ ] **Step 1: Write failing pure permission-matrix tests**
+- [x] **Step 1: Write failing pure permission-matrix tests**
 
 Freeze all legacy permission strings and test role/grant coverage. In particular, `viewer` can read, `editor` cannot delete applications, `can_edit` cannot delete/publish/share, and `full_access` covers all application/workflow operations.
 
-- [ ] **Step 2: Write failing resolution-order tests**
+- [x] **Step 2: Write failing resolution-order tests**
 
 Use fakes to prove this order:
 
@@ -287,15 +289,15 @@ global admin -> application owner -> team role OR team-app grant -> deny
 
 Require every requested permission, return not-found separately from forbidden, and ensure one unrelated team grant cannot authorize another application.
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run `go test ./internal/rbac` and expect missing symbols.
 
-- [ ] **Step 4: Implement permission types and authorizer**
+- [x] **Step 4: Implement permission types and authorizer**
 
 Use typed constants rather than free-form strings. The authorizer reads only `control` through sqlc-backed queries and has explicit `AuthorizeApp` and `AuthorizeTeam` methods.
 
-- [ ] **Step 5: Run tests and commit the RBAC slice**
+- [x] **Step 5: Run tests and commit the RBAC slice**
 
 Run `go test ./internal/rbac ./...`, `go vet ./...`, and commit Task 4 files with message `feat: add three-level RBAC authorization`.
 
