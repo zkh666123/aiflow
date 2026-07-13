@@ -147,19 +147,21 @@ Run `go test ./internal/config`, the native environment tests, `sqlc generate`, 
 - Create: `flowai-studio-control-plane/internal/httpapi/errors.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/json.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/middleware.go`
+- Create: `flowai-studio-control-plane/internal/httpapi/authentication.go`
+- Create: `flowai-studio-control-plane/internal/httpapi/authentication_test.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/compatibility_test.go`
 - Create: `flowai-studio-control-plane/internal/auth/jwt.go`
 - Create: `flowai-studio-control-plane/internal/auth/jwt_test.go`
 
-- [ ] **Step 1: Write failing envelope and strict-decoder tests**
+- [x] **Step 1: Write failing envelope and strict-decoder tests**
 
 Test success and error payloads against the frozen keys, verify POST handlers can emit 201, reject unknown JSON fields and trailing JSON values with 400 `BAD_REQUEST`, and verify panics become 500 `INTERNAL_ERROR` without stack traces.
 
-- [ ] **Step 2: Write failing JWT tests**
+- [x] **Step 2: Write failing JWT tests**
 
 Tests create a seven-day HS256 token containing `userId` and `username`, reject wrong algorithms, expired tokens, malformed Bearer headers, and tokens signed by another secret.
 
-- [ ] **Step 3: Run focused tests and verify RED**
+- [x] **Step 3: Run focused tests and verify RED**
 
 Run:
 
@@ -169,7 +171,7 @@ go test ./internal/httpapi ./internal/auth
 
 Expected: FAIL because strict decoding, API errors, and JWT services do not exist.
 
-- [ ] **Step 4: Implement boundary helpers**
+- [x] **Step 4: Implement boundary helpers**
 
 Define:
 
@@ -188,20 +190,20 @@ func WriteError(c *gin.Context, err *APIError)
 
 Use `json.Decoder.DisallowUnknownFields`, require one JSON value, preserve the request URI in error `path`, and keep internal causes out of the response.
 
-- [ ] **Step 5: Implement JWT service and middleware**
+- [x] **Step 5: Implement JWT service and middleware**
 
 Define an authenticated principal:
 
 ```go
 type Principal struct {
-    UserID   uuid.UUID
+    UserID   string
     Username string
 }
 ```
 
 The Gin middleware accepts only `Authorization: Bearer <token>`, verifies HS256 and expiry, stores the principal in context, and emits stable 401 envelopes for missing/invalid tokens.
 
-- [ ] **Step 6: Run tests and commit the HTTP/auth boundary slice**
+- [x] **Step 6: Run tests and commit the HTTP/auth boundary slice**
 
 Run `go test ./internal/httpapi ./internal/auth`, `go vet ./...`, and `git diff --check`. Commit Task 2 files with message `feat: add compatible HTTP and JWT boundaries`.
 

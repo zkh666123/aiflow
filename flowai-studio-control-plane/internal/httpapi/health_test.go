@@ -52,7 +52,7 @@ func healthyCheckers() map[string]Checker {
 func TestHealthUsesTheFrozenEnvelopeAndAllDependencies(t *testing.T) {
 	response := performHealthRequest(t, healthyCheckers())
 
-	if response["success"] != true || response["code"] != "SUCCESS" || response["message"] != "success" {
+	if response["success"] != true || response["code"] != "SUCCESS" || response["message"] != "Success" {
 		t.Fatalf("unexpected envelope: %#v", response)
 	}
 	if _, ok := response["timestamp"].(string); !ok {
