@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
 	"log"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/apikeys"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/applications"
 	controlauth "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/auth"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/config"
@@ -91,6 +93,17 @@ func main() {
 	authorizer := rbac.NewAuthorizer(accessRepository)
 	applicationService := applications.NewService(store.NewApplicationRepository(queries), authorizer)
 	httpapi.RegisterApplicationRoutes(router, httpapi.NewApplicationHandler(applicationService), jwtService)
+	apiKeyService, err := apikeys.NewService(
+		store.NewAPIKeyRepository(queries),
+		settings.APIKeyHMACSecret,
+		settings.APIKeyHMACPreviousSecret,
+		rand.Reader,
+		time.Now,
+	)
+	if err != nil {
+		log.Fatal("configure API key service: ", err)
+	}
+	httpapi.RegisterAPIKeyRoutes(router, httpapi.NewAPIKeyHandler(apiKeyService), jwtService)
 	teamService := teams.NewService(store.NewTeamRepository(database), authorizer)
 	httpapi.RegisterTeamRoutes(router, httpapi.NewTeamHandler(teamService), jwtService)
 	server := &http.Server{
