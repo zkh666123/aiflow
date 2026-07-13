@@ -251,13 +251,15 @@ Commit only Task 3 files with message `chore: generate grpc language bindings`.
 - Create: `scripts/native/initialize-database.ps1`
 - Create: `scripts/native/database-contracts.test.ps1`
 - Create: `flowai-studio-control-plane/db/migrations/00001_control_schema.sql`
+- Create: `flowai-studio-control-plane/db/schema/control.sql`
 - Create: `flowai-studio-control-plane/db/query/health.sql`
 - Create: `flowai-studio-control-plane/sqlc.yaml`
+- Create: `flowai-studio-ai-runtime/pyproject.toml`
 - Create: `flowai-studio-ai-runtime/alembic.ini`
 - Create: `flowai-studio-ai-runtime/alembic/env.py`
 - Create: `flowai-studio-ai-runtime/alembic/versions/0001_ai_schema.py`
 
-- [ ] **Step 1: Write the failing database ownership test**
+- [x] **Step 1: Write the failing database ownership test**
 
 The PowerShell test must run the bootstrap twice and prove:
 
@@ -268,13 +270,13 @@ The PowerShell test must run the bootstrap twice and prove:
 - Runtime roles cannot create or alter tables.
 - Goose and Alembic version state is stored in the owned schema.
 
-- [ ] **Step 2: Run the test and confirm bootstrap files are missing**
+- [x] **Step 2: Run the test and confirm bootstrap files are missing**
 
 Run: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/database-contracts.test.ps1`
 
 Expected: FAIL because `initialize-database.ps1` does not exist.
 
-- [ ] **Step 3: Implement idempotent secret and role bootstrap**
+- [x] **Step 3: Implement idempotent secret and role bootstrap**
 
 The script generates `.env.native` on first run with cryptographically random values for:
 
@@ -289,7 +291,7 @@ FLOWAI_REDIS_URL
 
 It sends role/password SQL to `wsl.exe -u postgres -- psql` over stdin so passwords do not appear in command arguments or logs. Use separate migrator and runtime roles for `control` and `ai`. Create the database and extension before running goose, sqlc generation, and Alembic.
 
-- [ ] **Step 4: Apply migrations and verify ownership**
+- [x] **Step 4: Apply migrations and verify ownership**
 
 Run:
 
@@ -301,14 +303,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/database-cont
 
 Expected: the bootstrap is idempotent and every positive/negative privilege assertion passes.
 
-- [ ] **Step 5: Commit database foundation**
+- [x] **Step 5: Commit database foundation**
 
 Commit only Task 4 files, excluding `.env.native`, with message `feat: bootstrap isolated postgres schemas`.
 
 ## Task 5: Build The Authenticated Python AI Runtime Skeleton
 
 **Files:**
-- Create: `flowai-studio-ai-runtime/pyproject.toml`
+- Modify: `flowai-studio-ai-runtime/pyproject.toml`
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/config.py`
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/grpc/auth.py`
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/grpc/model_service.py`
