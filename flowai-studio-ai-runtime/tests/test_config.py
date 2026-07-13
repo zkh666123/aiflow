@@ -2,6 +2,7 @@ import pytest
 from pydantic import ValidationError
 
 from aiflow_runtime.config import Settings
+from aiflow_runtime.server import event_loop_factory
 
 
 def make_settings(**overrides: str) -> Settings:
@@ -32,3 +33,10 @@ def test_rejects_non_loopback_or_incomplete_grpc_addresses(address: str) -> None
 def test_rejects_missing_or_weak_service_tokens(token: str) -> None:
     with pytest.raises(ValidationError):
         make_settings(grpc_token=token)
+
+
+def test_windows_uses_the_psycopg_compatible_selector_loop() -> None:
+    factory = event_loop_factory("win32")
+
+    assert factory is not None
+    assert factory().__class__.__name__ == "_WindowsSelectorEventLoop"

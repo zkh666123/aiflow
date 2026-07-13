@@ -473,21 +473,21 @@ Commit only Task 7 files with message `feat: add control plane health endpoint`.
 - Create: `scripts/native/process-contracts.test.cjs`
 - Modify: `flowai-studio-frontend/vite.config.ts`
 
-- [ ] **Step 1: Write failing lifecycle contract tests**
+- [x] **Step 1: Write failing lifecycle contract tests**
 
 Tests must require hidden background windows, PID files under `.runtime`, resolved workspace-bound working directories, loopback-only service addresses, process identity validation before stop, and a temporary Vite route switch that can target either NestJS `3000` or Go `3001` without frontend code changes.
 
-- [ ] **Step 2: Run tests and confirm scripts are missing**
+- [x] **Step 2: Run tests and confirm scripts are missing**
 
 Run: `node --test scripts/native/process-contracts.test.cjs`
 
 Expected: FAIL because lifecycle scripts do not exist.
 
-- [ ] **Step 3: Implement safe native lifecycle scripts**
+- [x] **Step 3: Implement safe native lifecycle scripts**
 
 `start-services.ps1` must check PostgreSQL/Redis first, then start sandbox, AI runtime, and Go in that order. It writes PID plus executable and command-line identity, refuses duplicate starts, and waits for health before continuing. `stop-services.ps1` stops only matching workspace processes in reverse order and never uses broad name-based termination.
 
-- [ ] **Step 4: Run the native integration path**
+- [x] **Step 4: Run the native integration path**
 
 Run:
 
@@ -498,9 +498,9 @@ Invoke-RestMethod http://127.0.0.1:3001/api/health | ConvertTo-Json -Depth 8
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/stop-services.ps1
 ```
 
-Expected: AI and Go report healthy, sandbox reports explicit `NOT_READY` until its checked WASI artifact exists, the public Go envelope reports that state without exposing internals, and all three native processes stop cleanly.
+Expected: AI reports healthy, the Go endpoint is reachable and reports business status `degraded` only because sandbox is explicitly `NOT_READY`, the public envelope exposes no internals, and all three native processes stop cleanly.
 
-- [ ] **Step 5: Commit lifecycle integration**
+- [x] **Step 5: Commit lifecycle integration**
 
 Commit only Task 8 files with message `feat: add native service lifecycle scripts`.
 

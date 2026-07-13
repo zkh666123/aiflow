@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import asyncio
+import sys
+from collections.abc import Callable
 
 import grpc
 import redis.asyncio as redis
@@ -118,5 +120,13 @@ async def serve() -> None:
         await engine.dispose()
 
 
+def event_loop_factory(
+    platform: str = sys.platform,
+) -> Callable[[], asyncio.AbstractEventLoop] | None:
+    if platform == "win32":
+        return asyncio.SelectorEventLoop
+    return None
+
+
 if __name__ == "__main__":
-    asyncio.run(serve())
+    asyncio.run(serve(), loop_factory=event_loop_factory())
