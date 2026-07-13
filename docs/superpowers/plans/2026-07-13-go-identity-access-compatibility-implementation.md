@@ -353,26 +353,29 @@ Run all Go tests, `go vet ./...`, and live owner/view/edit/delete checks. Commit
 - Create: `flowai-studio-control-plane/internal/teams/service.go`
 - Create: `flowai-studio-control-plane/internal/teams/service_test.go`
 - Create: `flowai-studio-control-plane/internal/store/team_repository.go`
+- Create: `flowai-studio-control-plane/internal/store/team_repository_test.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/teams.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/teams_test.go`
+- Modify: `flowai-studio-control-plane/cmd/api/main.go`
+- Create: `scripts/native/team-contracts.test.ps1`
 
-- [ ] **Step 1: Write failing team-service tests**
+- [x] **Step 1: Write failing team-service tests**
 
 Cover transactional team+owner creation, list counts and `myRole`, member-only detail access, owner/admin management, owner-only delete, duplicate/self member rejection, immutable owner role, owner removal/leave rejection, application-owner-only team sharing, and grant updates/removal scoped to the requested team.
 
-- [ ] **Step 2: Write failing route compatibility tests**
+- [x] **Step 2: Write failing route compatibility tests**
 
 Freeze all 12 team routes, POST 201 semantics, UUID validation, strict role/grant enums, response shapes used by `teamApi.ts`, and error status mapping.
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run `go test ./internal/teams ./internal/httpapi -run 'TestTeam'` and expect missing behavior.
 
-- [ ] **Step 4: Implement transactions and routes**
+- [x] **Step 4: Implement transactions and routes**
 
 Use pgx transactions for team+owner membership creation and any multi-row invariant. Re-check membership/ownership inside the transaction before writes so concurrent requests cannot bypass owner protections.
 
-- [ ] **Step 5: Run tests and commit the team slice**
+- [x] **Step 5: Run tests and commit the team slice**
 
 Run all Go tests, `go vet ./...`, live owner/admin/viewer checks, and commit Task 6 files with message `feat: migrate team and membership APIs to Go`.
 

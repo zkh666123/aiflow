@@ -17,6 +17,7 @@ import (
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/rbac"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/store"
 	controlstore "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/store/sqlc"
+	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/teams"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
@@ -90,6 +91,8 @@ func main() {
 	authorizer := rbac.NewAuthorizer(accessRepository)
 	applicationService := applications.NewService(store.NewApplicationRepository(queries), authorizer)
 	httpapi.RegisterApplicationRoutes(router, httpapi.NewApplicationHandler(applicationService), jwtService)
+	teamService := teams.NewService(store.NewTeamRepository(database), authorizer)
+	httpapi.RegisterTeamRoutes(router, httpapi.NewTeamHandler(teamService), jwtService)
 	server := &http.Server{
 		Addr:              settings.HTTPAddress,
 		Handler:           router,
