@@ -412,23 +412,24 @@ Commit only Task 6 files with message `feat: add fail-closed wasi sandbox skelet
 - Create: `flowai-studio-control-plane/cmd/api/main.go`
 - Create: `flowai-studio-control-plane/internal/config/config.go`
 - Create: `flowai-studio-control-plane/internal/grpcclient/ai.go`
+- Create: `flowai-studio-control-plane/internal/grpcclient/sandbox.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/envelope.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/health.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/router.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/health_test.go`
 - Create: `flowai-studio-control-plane/internal/config/config_test.go`
 
-- [ ] **Step 1: Write failing config and HTTP compatibility tests**
+- [x] **Step 1: Write failing config and HTTP compatibility tests**
 
-Tests must require loopback AI and sandbox addresses, reject missing gRPC tokens, and prove `GET /api/health` returns the frozen response envelope with `database`, `redis`, `pgvector`, and `aiRuntime` checks. A failed dependency yields HTTP 200 with business status `degraded`, matching the legacy endpoint behavior.
+Tests must require loopback AI and sandbox addresses, reject missing gRPC tokens, and prove `GET /api/health` returns the frozen response envelope with `database`, `redis`, `pgvector`, `aiRuntime`, and `sandbox` checks. A failed dependency yields HTTP 200 with business status `degraded`, matching the legacy endpoint behavior.
 
-- [ ] **Step 2: Run tests and confirm missing package failures**
+- [x] **Step 2: Run tests and confirm missing package failures**
 
 Run: `go test ./...` from `flowai-studio-control-plane`.
 
 Expected: FAIL because the packages do not exist.
 
-- [ ] **Step 3: Implement the minimum Go service**
+- [x] **Step 3: Implement the minimum Go service**
 
 Use dependency interfaces in the health handler so tests use real handler behavior with deterministic fakes. Production wiring uses pgx, go-redis, and an authenticated gRPC client. The response remains:
 
@@ -444,7 +445,7 @@ Use dependency interfaces in the health handler so tests use real handler behavi
 
 The server binds to `127.0.0.1:3001` by default, applies request IDs and panic recovery, and shuts down on Ctrl+C with a bounded timeout.
 
-- [ ] **Step 4: Generate, format, and verify Go code**
+- [x] **Step 4: Generate, format, and verify Go code**
 
 Run:
 
@@ -458,7 +459,7 @@ go vet ./...
 
 Run the last three commands from `flowai-studio-control-plane`. Expected: tests and vet pass.
 
-- [ ] **Step 5: Commit the Go health slice**
+- [x] **Step 5: Commit the Go health slice**
 
 Commit only Task 7 files with message `feat: add control plane health endpoint`.
 
