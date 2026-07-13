@@ -1,5 +1,5 @@
 version: v2
-clean: true
+clean: false
 plugins:
   - remote: buf.build/protocolbuffers/go:v1.36.10
     out: flowai-studio-control-plane/internal/gen

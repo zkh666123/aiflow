@@ -18,6 +18,10 @@ yarn-error.log*
 **/.vite/
 **/.next/
 **/coverage/
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+*.py[cod]
 .runtime/
 flowai-studio-sandbox/runtime/
 *.wasm

@@ -177,7 +177,7 @@ Contract rules:
 - Model records expose provider, capabilities, context window, health, input/output cost, and configuration state.
 - `ExecutePythonRequest` contains code and explicit limits; the response contains stable status, stdout, stderr, duration, and failure code.
 
-`buf.gen.yaml` must pin the four plugin versions from `toolchain/native-tools.json`, write Go code under `flowai-studio-control-plane/internal/gen`, and write Python code/stubs under `proto/python/src`.
+`buf.gen.yaml` must pin the five plugin versions from `toolchain/native-tools.json`, write Go code under `flowai-studio-control-plane/internal/gen`, and write Python code/stubs under `proto/python/src`.
 
 - [x] **Step 4: Run source and Buf validation**
 
@@ -207,17 +207,17 @@ Commit only Task 2 files with message `feat: define internal grpc contracts`.
 - Generate: `flowai-studio-control-plane/internal/gen/aiflow/v1/*.pb.go`
 - Create: `scripts/proto/generated-contracts.test.cjs`
 
-- [ ] **Step 1: Write the failing generated-code test**
+- [x] **Step 1: Write the failing generated-code test**
 
 Assert that every source proto has Go and Python outputs, generated headers are present, no generated file is outside the two approved directories, and Python gRPC imports resolve after adding `proto/python/src` to `PYTHONPATH`.
 
-- [ ] **Step 2: Run the test and confirm generated files are missing**
+- [x] **Step 2: Run the test and confirm generated files are missing**
 
 Run: `node --test scripts/proto/generated-contracts.test.cjs`
 
 Expected: FAIL because generated files do not exist.
 
-- [ ] **Step 3: Generate and package the stubs**
+- [x] **Step 3: Generate and package the stubs**
 
 Run:
 
@@ -229,7 +229,7 @@ py -3.13 -c "from aiflow.v1 import execution_pb2, execution_pb2_grpc, sandbox_pb
 
 `proto/python/pyproject.toml` must define package `flowai-proto`, require Python 3.13, and pin compatible `protobuf==6.31.1` and `grpcio==1.74.0` runtimes.
 
-- [ ] **Step 4: Verify deterministic generation**
+- [x] **Step 4: Verify deterministic generation**
 
 Run `buf generate` a second time, then run:
 
@@ -240,7 +240,7 @@ git diff --exit-code -- proto/python/src flowai-studio-control-plane/internal/ge
 
 Expected: generated tests pass and the second generation creates no diff.
 
-- [ ] **Step 5: Commit generated contracts**
+- [x] **Step 5: Commit generated contracts**
 
 Commit only Task 3 files with message `chore: generate grpc language bindings`.
 
