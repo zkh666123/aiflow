@@ -5,7 +5,14 @@ description = "FlowAI Studio AI execution plane"
 requires-python = ">=3.13,<3.14"
 dependencies = [
   "alembic==1.18.5",
+  "fastapi==0.139.0",
+  "flowai-proto",
+  "grpcio==1.74.0",
+  "protobuf==6.31.1",
   "psycopg[binary]==3.3.4",
+  "pydantic==2.13.4",
+  "pydantic-settings==2.14.2",
+  "redis==8.0.1",
   "sqlalchemy==2.0.51",
 ]
 
@@ -15,3 +22,16 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/aiflow_runtime"]
+
+[dependency-groups]
+dev = [
+  "pytest==9.1.1",
+  "pytest-asyncio==1.4.0",
+]
+
+[tool.uv.sources]
+flowai-proto = { path = "../proto/python", editable = true }
+
+[tool.pytest.ini_options]
+asyncio_mode = "strict"
+testpaths = ["tests"]

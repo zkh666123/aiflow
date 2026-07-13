@@ -320,17 +320,17 @@ Commit only Task 4 files, excluding `.env.native`, with message `feat: bootstrap
 - Create: `flowai-studio-ai-runtime/tests/test_model_service.py`
 - Generate: `flowai-studio-ai-runtime/uv.lock`
 
-- [ ] **Step 1: Write failing config, auth, and health tests**
+- [x] **Step 1: Write failing config, auth, and health tests**
 
 Tests must require loopback binding, reject missing/blank service tokens, return `UNAUTHENTICATED` for absent or wrong metadata, use `hmac.compare_digest`, and return database/Redis/provider health without exposing connection strings or exceptions.
 
-- [ ] **Step 2: Run tests and confirm imports fail**
+- [x] **Step 2: Run tests and confirm imports fail**
 
 Run: `uv run --project flowai-studio-ai-runtime pytest flowai-studio-ai-runtime/tests -q`
 
 Expected: FAIL because `aiflow_runtime` modules do not exist.
 
-- [ ] **Step 3: Implement the minimum server**
+- [x] **Step 3: Implement the minimum server**
 
 The server must:
 
@@ -341,7 +341,7 @@ server.add_insecure_port(settings.grpc_address)  # address validated as loopback
 
 Register every public AI service. Only `ModelService.ListModels` and `HealthCheck` return implemented responses in this phase; other RPCs return gRPC `UNIMPLEMENTED` without starting background work. Health checks use bounded deadlines and stable status fields.
 
-- [ ] **Step 4: Lock dependencies and run tests**
+- [x] **Step 4: Lock dependencies and run tests**
 
 Pin FastAPI, Pydantic v2, pydantic-settings, SQLAlchemy 2, psycopg 3, Alembic, grpcio 1.74.0, protobuf 6.31.1, redis, and pytest through `uv.lock`.
 
@@ -355,7 +355,7 @@ uv run --project flowai-studio-ai-runtime python -m compileall -q flowai-studio-
 
 Expected: all tests pass and compileall exits zero.
 
-- [ ] **Step 5: Commit the AI runtime skeleton**
+- [x] **Step 5: Commit the AI runtime skeleton**
 
 Commit only Task 5 files with message `feat: add authenticated ai runtime skeleton`.
 
