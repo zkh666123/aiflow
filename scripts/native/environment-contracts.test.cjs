@@ -7,15 +7,18 @@ const root = path.resolve(__dirname, '..', '..');
 const manifestPath = path.join(root, 'toolchain', 'native-tools.json');
 const checkerPath = path.join(root, 'scripts', 'native', 'check-environment.ps1');
 const installerPath = path.join(root, 'scripts', 'native', 'install-tools.ps1');
+const initializerPath = path.join(root, 'scripts', 'native', 'initialize-database.ps1');
 
 test('pins the native toolchain without Docker', () => {
   assert.ok(existsSync(manifestPath), 'toolchain/native-tools.json must exist');
   assert.ok(existsSync(checkerPath), 'scripts/native/check-environment.ps1 must exist');
   assert.ok(existsSync(installerPath), 'scripts/native/install-tools.ps1 must exist');
+  assert.ok(existsSync(initializerPath), 'scripts/native/initialize-database.ps1 must exist');
 
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
   const script = readFileSync(checkerPath, 'utf8');
   const installer = readFileSync(installerPath, 'utf8');
+  const initializer = readFileSync(initializerPath, 'utf8');
 
   assert.deepEqual(manifest.runtimes, {
     go: '1.26',
@@ -62,4 +65,8 @@ test('pins the native toolchain without Docker', () => {
   assert.match(installer, /Get-FileHash/);
   assert.match(installer, /Expand-Archive/);
   assert.doesNotMatch(installer, /go\s+install/);
+  assert.match(initializer, /FLOWAI_JWT_SECRET/);
+  assert.match(initializer, /FLOWAI_API_KEY_HMAC_SECRET/);
+  assert.match(initializer, /Ensure-EnvValue/);
+  assert.match(initializer, /FLOWAI_JWT_EXPIRATION/);
 });

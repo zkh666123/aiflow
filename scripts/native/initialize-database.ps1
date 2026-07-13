@@ -34,6 +34,20 @@ function Read-EnvFile {
     return $values
 }
 
+function Ensure-EnvValue {
+    param(
+        [Parameter(Mandatory)][System.Collections.IDictionary]$Values,
+        [Parameter(Mandatory)][string]$Name,
+        [Parameter(Mandatory)][scriptblock]$Factory
+    )
+
+    if (-not $Values.Contains($Name) -or [string]::IsNullOrWhiteSpace([string]$Values[$Name])) {
+        $Values[$Name] = & $Factory
+        return $true
+    }
+    return $false
+}
+
 function ConvertTo-SqlLiteral {
     param([Parameter(Mandatory)][string]$Value)
     return "'" + $Value.Replace("'", "''") + "'"
@@ -67,12 +81,19 @@ if (-not (Test-Path -LiteralPath $envPath)) {
     $aiPassword = New-Secret
     $aiMigrationPassword = New-Secret
     $grpcToken = New-Secret
+	$jwtSecret = New-Secret
+	$apiKeyHmacSecret = New-Secret
 
     $settings = [ordered]@{
         FLOWAI_HTTP_ADDR = '127.0.0.1:3001'
         FLOWAI_AI_GRPC_ADDR = '127.0.0.1:50051'
         FLOWAI_SANDBOX_GRPC_ADDR = '127.0.0.1:50052'
         FLOWAI_GRPC_TOKEN = $grpcToken
+		FLOWAI_JWT_SECRET = $jwtSecret
+		FLOWAI_JWT_EXPIRATION = '168h'
+		FLOWAI_API_KEY_HMAC_SECRET = $apiKeyHmacSecret
+		FLOWAI_API_KEY_HMAC_PREVIOUS_SECRET = ''
+		FLOWAI_FRONTEND_URL = 'http://127.0.0.1:5173'
         FLOWAI_CONTROL_DATABASE_URL = "postgres://flowai_control:$([Uri]::EscapeDataString($controlPassword))@127.0.0.1:5432/flowai_studio?sslmode=disable&search_path=control"
         FLOWAI_CONTROL_MIGRATION_DATABASE_URL = "postgres://flowai_control_migrator:$([Uri]::EscapeDataString($controlMigrationPassword))@127.0.0.1:5432/flowai_studio?sslmode=disable&search_path=control"
         FLOWAI_AI_DATABASE_URL = "postgresql+psycopg://flowai_ai:$([Uri]::EscapeDataString($aiPassword))@127.0.0.1:5432/flowai_studio?sslmode=disable"
@@ -85,8 +106,26 @@ if (-not (Test-Path -LiteralPath $envPath)) {
 }
 
 $settings = Read-EnvFile $envPath
+$settingsChanged = $false
+$settingsChanged = (Ensure-EnvValue $settings 'FLOWAI_JWT_SECRET' { New-Secret }) -or $settingsChanged
+$settingsChanged = (Ensure-EnvValue $settings 'FLOWAI_JWT_EXPIRATION' { '168h' }) -or $settingsChanged
+$settingsChanged = (Ensure-EnvValue $settings 'FLOWAI_API_KEY_HMAC_SECRET' { New-Secret }) -or $settingsChanged
+if (-not $settings.Contains('FLOWAI_API_KEY_HMAC_PREVIOUS_SECRET')) {
+    $settings['FLOWAI_API_KEY_HMAC_PREVIOUS_SECRET'] = ''
+    $settingsChanged = $true
+}
+$settingsChanged = (Ensure-EnvValue $settings 'FLOWAI_FRONTEND_URL' { 'http://127.0.0.1:5173' }) -or $settingsChanged
+if ($settingsChanged) {
+    $settings.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" } | Set-Content -Encoding utf8 -LiteralPath $envPath
+    Write-Host "Backfilled missing native configuration in $envPath"
+}
+
 $required = @(
     'FLOWAI_GRPC_TOKEN',
+	'FLOWAI_JWT_SECRET',
+	'FLOWAI_JWT_EXPIRATION',
+	'FLOWAI_API_KEY_HMAC_SECRET',
+	'FLOWAI_FRONTEND_URL',
     'FLOWAI_CONTROL_DATABASE_URL',
     'FLOWAI_CONTROL_MIGRATION_DATABASE_URL',
     'FLOWAI_AI_DATABASE_URL',

@@ -27,6 +27,7 @@
 
 - `flowai-studio-control-plane/db/migrations/00002_identity_access.sql`: users, applications, teams, memberships, team grants, API keys, and shares.
 - `flowai-studio-control-plane/db/schema/control.sql`: sqlc parser copy of the complete control schema.
+- `flowai-studio-control-plane/sqlc.yaml`: reads the canonical schema copy once instead of reparsing migrations.
 - `flowai-studio-control-plane/db/query/*.sql`: typed CRUD and authorization queries.
 - `flowai-studio-control-plane/internal/auth/`: password hashing, JWT, Redis login lock, authenticated principal, and user service.
 - `flowai-studio-control-plane/internal/rbac/`: permission constants and access resolution.
@@ -47,13 +48,14 @@
 - Modify: `scripts/native/initialize-database.ps1`
 - Create: `flowai-studio-control-plane/db/migrations/00002_identity_access.sql`
 - Modify: `flowai-studio-control-plane/db/schema/control.sql`
+- Modify: `flowai-studio-control-plane/sqlc.yaml`
 - Create: `flowai-studio-control-plane/db/query/users.sql`
 - Create: `flowai-studio-control-plane/db/query/applications.sql`
 - Create: `flowai-studio-control-plane/db/query/teams.sql`
 - Create: `flowai-studio-control-plane/db/query/api_keys.sql`
 - Create: `flowai-studio-control-plane/db/query/shares.sql`
 
-- [ ] **Step 1: Write failing configuration and environment tests**
+- [x] **Step 1: Write failing configuration and environment tests**
 
 Add assertions that `config.Load()` rejects missing or identical JWT/API-key secrets and accepts:
 
@@ -66,7 +68,7 @@ t.Setenv("FLOWAI_FRONTEND_URL", "http://127.0.0.1:5173")
 
 Add script-contract assertions that the ignored native environment contains both secret names and that existing environment files are backfilled without replacing existing values.
 
-- [ ] **Step 2: Run tests and verify RED**
+- [x] **Step 2: Run tests and verify RED**
 
 Run:
 
@@ -77,7 +79,7 @@ node --test scripts/native/environment-contracts.test.cjs
 
 Expected: FAIL because the new settings and initializer behavior do not exist.
 
-- [ ] **Step 3: Extend settings and native secret initialization**
+- [x] **Step 3: Extend settings and native secret initialization**
 
 Add these fields and validation:
 
@@ -91,7 +93,7 @@ JWTExpiration           time.Duration
 
 Require current secrets to contain at least 32 non-blank characters, require them to differ from each other and the gRPC token, default `JWTExpiration` to `168h`, and validate `FrontendURL` as an absolute `http` or `https` URL. Update `initialize-database.ps1` to generate missing values with `New-Secret` while preserving an existing ignored environment file.
 
-- [ ] **Step 4: Add the reversible identity/access migration**
+- [x] **Step 4: Add the reversible identity/access migration**
 
 Create constrained tables with `uuid` IDs, `timestamptz`, foreign keys, and checks:
 
@@ -111,7 +113,7 @@ CREATE TABLE control.users (
 
 Add `applications`, `teams`, `team_members`, `team_applications`, `api_keys`, and `app_shares` with the enum checks listed in Contract Decisions. Add indexes for ownership, membership, application grants, API-key prefix, and updated-time list ordering. The Goose down section drops child tables before parents.
 
-- [ ] **Step 5: Add typed sqlc queries and generate code**
+- [x] **Step 5: Add typed sqlc queries and generate code**
 
 Queries must cover exact business operations, including `CreateUser`, `GetUserByUsername`, `GetUserByID`, `UpdateUserProfile`, owned/team application lists, team membership and grant lookup, API-key owner operations, and application-share owner/public lookups. Use only sqlc parameters; no SQL string concatenation.
 
@@ -123,7 +125,7 @@ sqlc generate -f flowai-studio-control-plane/sqlc.yaml
 
 Expected: generated `internal/store/sqlc` code includes all new query methods.
 
-- [ ] **Step 6: Apply migrations and verify database ownership**
+- [x] **Step 6: Apply migrations and verify database ownership**
 
 Run:
 
@@ -134,7 +136,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/database-cont
 
 Expected: migrations apply idempotently; `flowai_control` can perform DML in `control` but cannot create tables or write `ai`.
 
-- [ ] **Step 7: Run tests and commit the schema slice**
+- [x] **Step 7: Run tests and commit the schema slice**
 
 Run `go test ./internal/config`, the native environment tests, `sqlc generate`, and `git diff --check`. Commit only Task 1 files with message `feat: add control identity schema and secrets`.
 

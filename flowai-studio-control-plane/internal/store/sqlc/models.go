@@ -8,8 +8,81 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type ControlApiKey struct {
+	ID            pgtype.UUID        `json:"id"`
+	Name          string             `json:"name"`
+	KeyDigest     []byte             `json:"key_digest"`
+	KeyPrefix     string             `json:"key_prefix"`
+	Scopes        []byte             `json:"scopes"`
+	IsActive      bool               `json:"is_active"`
+	LastUsedAt    pgtype.Timestamptz `json:"last_used_at"`
+	ExpiresAt     pgtype.Timestamptz `json:"expires_at"`
+	UserID        pgtype.UUID        `json:"user_id"`
+	ApplicationID pgtype.UUID        `json:"application_id"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+}
+
+type ControlAppShare struct {
+	ID            pgtype.UUID        `json:"id"`
+	ApplicationID pgtype.UUID        `json:"application_id"`
+	ShareLink     string             `json:"share_link"`
+	IsPublic      bool               `json:"is_public"`
+	AccessCount   int32              `json:"access_count"`
+	EmbedConfig   []byte             `json:"embed_config"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt     pgtype.Timestamptz `json:"updated_at"`
+}
+
+type ControlApplication struct {
+	ID          pgtype.UUID        `json:"id"`
+	Name        string             `json:"name"`
+	Description pgtype.Text        `json:"description"`
+	Icon        pgtype.Text        `json:"icon"`
+	Status      string             `json:"status"`
+	ShareLink   pgtype.Text        `json:"share_link"`
+	OwnerID     pgtype.UUID        `json:"owner_id"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
 type ControlSchemaMetadatum struct {
 	Key       string             `json:"key"`
 	Value     string             `json:"value"`
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
+}
+
+type ControlTeam struct {
+	ID          pgtype.UUID        `json:"id"`
+	Name        string             `json:"name"`
+	Description pgtype.Text        `json:"description"`
+	Avatar      pgtype.Text        `json:"avatar"`
+	OwnerID     pgtype.UUID        `json:"owner_id"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+}
+
+type ControlTeamApplication struct {
+	ID            pgtype.UUID        `json:"id"`
+	TeamID        pgtype.UUID        `json:"team_id"`
+	ApplicationID pgtype.UUID        `json:"application_id"`
+	Permission    string             `json:"permission"`
+	AddedAt       pgtype.Timestamptz `json:"added_at"`
+}
+
+type ControlTeamMember struct {
+	ID       pgtype.UUID        `json:"id"`
+	TeamID   pgtype.UUID        `json:"team_id"`
+	UserID   pgtype.UUID        `json:"user_id"`
+	Role     string             `json:"role"`
+	JoinedAt pgtype.Timestamptz `json:"joined_at"`
+}
+
+type ControlUser struct {
+	ID           pgtype.UUID        `json:"id"`
+	Username     string             `json:"username"`
+	PasswordHash string             `json:"password_hash"`
+	Avatar       pgtype.Text        `json:"avatar"`
+	GlobalRole   string             `json:"global_role"`
+	CreatedAt    pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt    pgtype.Timestamptz `json:"updated_at"`
 }

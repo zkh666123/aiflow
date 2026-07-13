@@ -1,11 +1,15 @@
--- sqlc needs the externally bootstrapped schema declared before it parses migrations.
-CREATE SCHEMA control;
-
-CREATE TABLE control.schema_metadata (
-    key text PRIMARY KEY,
-    value text NOT NULL,
-    updated_at timestamptz NOT NULL DEFAULT now()
-);
+-- +goose Up
+-- +goose StatementBegin
+CREATE OR REPLACE FUNCTION control.set_updated_at()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$;
+-- +goose StatementEnd
 
 CREATE TABLE control.users (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -87,3 +91,40 @@ CREATE TABLE control.app_shares (
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE INDEX applications_owner_updated_idx
+    ON control.applications (owner_id, updated_at DESC);
+CREATE INDEX team_members_user_idx
+    ON control.team_members (user_id, team_id);
+CREATE INDEX team_applications_application_idx
+    ON control.team_applications (application_id, team_id);
+CREATE INDEX api_keys_user_created_idx
+    ON control.api_keys (user_id, created_at DESC);
+CREATE INDEX api_keys_prefix_idx
+    ON control.api_keys (key_prefix);
+
+CREATE TRIGGER users_set_updated_at
+BEFORE UPDATE ON control.users
+FOR EACH ROW EXECUTE FUNCTION control.set_updated_at();
+
+CREATE TRIGGER applications_set_updated_at
+BEFORE UPDATE ON control.applications
+FOR EACH ROW EXECUTE FUNCTION control.set_updated_at();
+
+CREATE TRIGGER teams_set_updated_at
+BEFORE UPDATE ON control.teams
+FOR EACH ROW EXECUTE FUNCTION control.set_updated_at();
+
+CREATE TRIGGER app_shares_set_updated_at
+BEFORE UPDATE ON control.app_shares
+FOR EACH ROW EXECUTE FUNCTION control.set_updated_at();
+
+-- +goose Down
+DROP TABLE control.app_shares;
+DROP TABLE control.api_keys;
+DROP TABLE control.team_applications;
+DROP TABLE control.team_members;
+DROP TABLE control.teams;
+DROP TABLE control.applications;
+DROP TABLE control.users;
+DROP FUNCTION control.set_updated_at();

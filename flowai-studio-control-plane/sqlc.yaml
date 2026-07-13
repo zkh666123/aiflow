@@ -2,9 +2,7 @@ version: "2"
 sql:
   - engine: postgresql
     queries: db/query
-    schema:
-      - db/schema/control.sql
-      - db/migrations
+    schema: db/schema/control.sql
     gen:
       go:
         package: controlstore
