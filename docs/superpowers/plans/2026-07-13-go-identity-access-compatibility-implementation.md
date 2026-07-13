@@ -295,7 +295,7 @@ Run `go test ./internal/rbac` and expect missing symbols.
 
 - [x] **Step 4: Implement permission types and authorizer**
 
-Use typed constants rather than free-form strings. The authorizer reads only `control` through sqlc-backed queries and has explicit `AuthorizeApp` and `AuthorizeTeam` methods.
+Use typed constants rather than free-form strings. The authorizer reads only `control` through sqlc-backed queries and has explicit `AuthorizeApplication` and `AuthorizeTeam` methods.
 
 - [x] **Step 5: Run tests and commit the RBAC slice**
 
@@ -307,22 +307,25 @@ Run `go test ./internal/rbac ./...`, `go vet ./...`, and commit Task 4 files wit
 - Create: `flowai-studio-control-plane/internal/applications/service.go`
 - Create: `flowai-studio-control-plane/internal/applications/service_test.go`
 - Create: `flowai-studio-control-plane/internal/store/application_repository.go`
+- Create: `flowai-studio-control-plane/internal/store/application_repository_test.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/applications.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/applications_test.go`
+- Modify: `flowai-studio-control-plane/cmd/api/main.go`
+- Create: `scripts/native/application-contracts.test.ps1`
 
-- [ ] **Step 1: Write failing service tests**
+- [x] **Step 1: Write failing service tests**
 
 Cover name/description/status validation, owner creation, updated-time ordering, owned plus team-access lists with `accessType`, not-found, `can_view` reads, `can_edit` updates and publish transitions, and `full_access` delete/archive transitions.
 
-- [ ] **Step 2: Write failing HTTP compatibility tests**
+- [x] **Step 2: Write failing HTTP compatibility tests**
 
 Freeze the nine routes, exact methods, JWT requirement, POST 201, other success 200, envelope fields, response camelCase names, and 400/401/403/404 mappings.
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run `go test ./internal/applications ./internal/httpapi -run 'TestApplication'` and expect failures for missing implementation.
 
-- [ ] **Step 4: Implement the application slice**
+- [x] **Step 4: Implement the application slice**
 
 Expose:
 
@@ -340,7 +343,7 @@ PATCH  /api/apps/:id/unarchive
 
 All authorization goes through the RBAC authorizer. SQL list queries deduplicate applications reachable through multiple teams and choose the strongest team grant.
 
-- [ ] **Step 5: Run tests and commit the application slice**
+- [x] **Step 5: Run tests and commit the application slice**
 
 Run all Go tests, `go vet ./...`, and live owner/view/edit/delete checks. Commit Task 5 files with message `feat: migrate application APIs to Go`.
 

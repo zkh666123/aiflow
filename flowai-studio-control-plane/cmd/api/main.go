@@ -9,10 +9,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/applications"
 	controlauth "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/auth"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/config"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/grpcclient"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/httpapi"
+	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/rbac"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/store"
 	controlstore "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/store/sqlc"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -72,7 +74,8 @@ func main() {
 	if err != nil {
 		log.Fatal("configure JWT service: ", err)
 	}
-	userRepository := store.NewUserRepository(controlstore.New(database))
+	queries := controlstore.New(database)
+	userRepository := store.NewUserRepository(queries)
 	userService, err := controlauth.NewService(
 		userRepository,
 		controlauth.NewLoginLimiter(redisClient),
@@ -83,6 +86,10 @@ func main() {
 	}
 	router := httpapi.NewRouter(httpapi.NewHealthHandler(checks, settings.HealthTimeout))
 	httpapi.RegisterUserRoutes(router, httpapi.NewUserHandler(userService), jwtService)
+	accessRepository := store.NewAccessRepository(queries)
+	authorizer := rbac.NewAuthorizer(accessRepository)
+	applicationService := applications.NewService(store.NewApplicationRepository(queries), authorizer)
+	httpapi.RegisterApplicationRoutes(router, httpapi.NewApplicationHandler(applicationService), jwtService)
 	server := &http.Server{
 		Addr:              settings.HTTPAddress,
 		Handler:           router,
