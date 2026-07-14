@@ -388,19 +388,19 @@ Run all Go tests, `go vet ./...`, live owner/admin/viewer checks, and commit Tas
 - Create: `flowai-studio-control-plane/internal/httpapi/api_keys.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/api_keys_test.go`
 
-- [ ] **Step 1: Write failing cryptographic lifecycle tests**
+- [x] **Step 1: Write failing cryptographic lifecycle tests**
 
 Assert 32 random bytes, `sk-` plus 64 lowercase hex characters, a seven-character prefix, HMAC-SHA256 rather than plain SHA-256, no plaintext persistence, one-time plaintext response, current/previous-secret validation, constant-time digest comparison, expiry, inactive keys, and owner isolation.
 
-- [ ] **Step 2: Write failing HTTP tests**
+- [x] **Step 2: Write failing HTTP tests**
 
 Freeze POST/GET/DELETE/PATCH routes, default scopes, optional application filter, strict scope validation, dates, POST 201, and list responses that never contain `key` or `keyHash`.
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run `go test ./internal/apikeys ./internal/httpapi -run 'TestAPIKey'` and expect failures.
 
-- [ ] **Step 4: Implement API-key service and handlers**
+- [x] **Step 4: Implement API-key service and handlers**
 
 Use:
 
@@ -412,7 +412,7 @@ digest := mac.Sum(nil)
 
 Validate an application-scoped key belongs to the creating user. Persist scopes as `jsonb`. Update `last_used_at` only after successful authentication.
 
-- [ ] **Step 5: Run tests and commit the API-key slice**
+- [x] **Step 5: Run tests and commit the API-key slice**
 
 Run all Go tests, `go vet ./...`, scan the diff for secrets/plaintext keys, and commit Task 7 files with message `feat: add HMAC API key management`.
 
@@ -425,11 +425,11 @@ Run all Go tests, `go vet ./...`, scan the diff for secrets/plaintext keys, and 
 - Create: `flowai-studio-control-plane/internal/httpapi/shares.go`
 - Create: `flowai-studio-control-plane/internal/httpapi/shares_test.go`
 
-- [ ] **Step 1: Write failing share-service tests**
+- [x] **Step 1: Write failing share-service tests**
 
 Cover owner-only management, idempotent generation, approved GET compatibility behavior, public/disabled lookup, access-count increment, embed config JSON, revoke idempotency, and frontend URL construction.
 
-- [ ] **Step 2: Write failing HTTP compatibility tests**
+- [x] **Step 2: Write failing HTTP compatibility tests**
 
 Freeze:
 
@@ -444,15 +444,15 @@ GET    /api/share/:shareLink
 
 The public route has no JWT; every management route does. Ensure generated HTML is derived only from server-owned base URL, validated share identifiers, and validated theme values.
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run `go test ./internal/shares ./internal/httpapi -run 'TestShare'` and expect failures.
 
-- [ ] **Step 4: Implement share repository, service, and handlers**
+- [x] **Step 4: Implement share repository, service, and handlers**
 
 Generate `share-` plus 128 random bits. Store embed config as `jsonb`, validate allowed origins as absolute HTTP(S) origins, and return both `scriptTag` and the frontend-compatible `scriptCode` alias during migration.
 
-- [ ] **Step 5: Run tests and commit the share slice**
+- [x] **Step 5: Run tests and commit the share slice**
 
 Run all Go tests, `go vet ./...`, live public/private share checks, and commit Task 8 files with message `feat: migrate application sharing to Go`.
 
@@ -465,23 +465,23 @@ Run all Go tests, `go vet ./...`, live public/private share checks, and commit T
 - Create: `scripts/native/identity-access-contracts.test.ps1`
 - Modify: `scripts/native/check-services.ps1`
 
-- [ ] **Step 1: Write failing router inventory test**
+- [x] **Step 1: Write failing router inventory test**
 
 Build the Gin engine with fake services and compare registered method/path pairs to the 34 legacy entries plus `GET /api/apps/:appId/share`. Verify protected/public route placement and custom recovery middleware.
 
-- [ ] **Step 2: Write the live native contract test**
+- [x] **Step 2: Write the live native contract test**
 
 The PowerShell test resets only phase-owned rows, creates multiple users, logs in, exercises owner/admin/editor/viewer and team-grant paths, verifies one-time API-key plaintext, tests sharing, and asserts status/envelope fields. It must not read or print local secrets.
 
-- [ ] **Step 3: Run tests and verify RED**
+- [x] **Step 3: Run tests and verify RED**
 
 Run the router test and native script; expect missing dependency wiring/routes.
 
-- [ ] **Step 4: Wire repositories, services, handlers, and routes**
+- [x] **Step 4: Wire repositories, services, handlers, and routes**
 
 Construct one sqlc query set from the pgx pool, one Redis login limiter, one JWT service, one authorizer, and domain services in `main.go`. Register public user/share routes separately from JWT-protected route groups.
 
-- [ ] **Step 5: Run full phase verification**
+- [x] **Step 5: Run full phase verification**
 
 Run:
 
@@ -498,7 +498,7 @@ git diff --check
 
 Expected: all deterministic tests pass; PostgreSQL, Redis, and AI runtime are healthy; control plane may remain `degraded` only because the WASI guest is not yet ready.
 
-- [ ] **Step 6: Commit wiring and live contract coverage**
+- [x] **Step 6: Commit wiring and live contract coverage**
 
 Commit Task 9 files with message `test: verify Go identity and access compatibility`.
 
@@ -507,14 +507,23 @@ Commit Task 9 files with message `test: verify Go identity and access compatibil
 **Files:**
 - Modify: `docs/superpowers/plans/2026-07-13-go-identity-access-compatibility-implementation.md`
 
-- [ ] **Step 1: Check off completed plan steps**
+- [x] **Step 1: Check off completed plan steps**
 
 Mark only evidence-backed steps complete and add a completion record with exact test counts and live service status.
 
-- [ ] **Step 2: Review security and scope**
+- [x] **Step 2: Review security and scope**
 
 Verify no plaintext password/API key/secret enters logs, responses, command lines, git diffs, or database columns; every protected route checks authentication and domain authorization; every query is parameterized; and no user-staged legacy/frontend file entered migration commits.
 
-- [ ] **Step 3: Record the next implementation boundary**
+- [x] **Step 3: Record the next implementation boundary**
 
 The next plan is `Go workflows, templates, versions, traces, DAG execution, SSE, Redis controls, and cache`. Do not implement those systems inside this phase.
+
+## Completion Record - 2026-07-14
+
+- Commits: `ef3520a` API keys, `1f97af9` application-scope revocation, `8cf547f` sharing, `add08db` WSL keepalive, and `816d771` route/live compatibility coverage.
+- Automated evidence: 89 Go tests pass; 17/17 frozen contract tests pass; the router inventory contains exactly 35 phase routes; the unified native contract covers users, applications, teams, API keys, sharing, envelopes, and RBAC.
+- Database evidence: Goose is at version 3; pgvector is 0.8.5; migration/application is idempotent; runtime/migrator role isolation passes.
+- Live evidence: PostgreSQL, Redis, and AI runtime are healthy; the sandbox is `HEALTH_STATE_NOT_READY`; the Go control plane is therefore `degraded`, as expected until the WASI guest is installed.
+- Scope evidence: API-key plaintext is returned only at creation, database rows store HMAC digests, protected routes use JWT and domain authorization, SQL is parameterized through sqlc, and the pre-existing staged NestJS/frontend files were not included in migration commits.
+- Next boundary: workflows, templates, versions, traces, DAG execution, SSE, Redis controls, and cache.
