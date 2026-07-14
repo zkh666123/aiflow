@@ -17,6 +17,7 @@ import (
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/grpcclient"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/httpapi"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/rbac"
+	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/shares"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/store"
 	controlstore "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/store/sqlc"
 	"github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/teams"
@@ -93,6 +94,11 @@ func main() {
 	authorizer := rbac.NewAuthorizer(accessRepository)
 	applicationService := applications.NewService(store.NewApplicationRepository(queries), authorizer)
 	httpapi.RegisterApplicationRoutes(router, httpapi.NewApplicationHandler(applicationService), jwtService)
+	shareService, err := shares.NewService(store.NewShareRepository(database), rand.Reader, settings.FrontendURL)
+	if err != nil {
+		log.Fatal("configure application share service: ", err)
+	}
+	httpapi.RegisterShareRoutes(router, httpapi.NewShareHandler(shareService), jwtService)
 	apiKeyService, err := apikeys.NewService(
 		store.NewAPIKeyRepository(queries),
 		settings.APIKeyHMACSecret,
