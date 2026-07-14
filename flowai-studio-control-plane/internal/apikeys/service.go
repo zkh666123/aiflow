@@ -209,9 +209,8 @@ func (service *Service) Validate(ctx context.Context, rawKey string) (Credential
 	if record.ExpiresAt != nil && !record.ExpiresAt.After(now) {
 		return Credential{}, ErrInvalidAPIKey
 	}
-	if err := service.store.TouchAPIKey(ctx, record.ID); err != nil {
-		return Credential{}, &ServiceError{Kind: ErrorInternal, Message: "Failed to update API key usage", Cause: err}
-	}
+	// Usage metadata is best-effort and must not invalidate an otherwise valid credential.
+	_ = service.store.TouchAPIKey(ctx, record.ID)
 	return Credential{
 		UserID:        record.UserID,
 		ApplicationID: cloneStringPointer(record.ApplicationID),

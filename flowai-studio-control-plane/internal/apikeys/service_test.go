@@ -17,6 +17,7 @@ type fakeAPIKeyStore struct {
 	created          Record
 	ownerID          string
 	err              error
+	touchErr         error
 	touched          string
 	deleted          string
 	toggled          string
@@ -64,6 +65,9 @@ func (store *fakeAPIKeyStore) SetAPIKeyActive(_ context.Context, userID, keyID s
 
 func (store *fakeAPIKeyStore) TouchAPIKey(_ context.Context, keyID string) error {
 	store.touched = keyID
+	if store.touchErr != nil {
+		return store.touchErr
+	}
 	return store.err
 }
 
@@ -210,6 +214,28 @@ func TestValidateSupportsPreviousSecretAndRejectsInactiveExpiredOrWrongKeys(t *t
 	_, err = service.Validate(context.Background(), "sk-"+strings.Repeat("b", 64))
 	if !errors.Is(err, ErrInvalidAPIKey) {
 		t.Fatalf("wrong key error = %v", err)
+	}
+}
+
+func TestValidateKeepsCredentialValidWhenUsageTouchFails(t *testing.T) {
+	now := time.Date(2026, 7, 13, 15, 0, 0, 0, time.UTC)
+	secret := strings.Repeat("k", 32)
+	raw := "sk-" + strings.Repeat("a", 64)
+	digest := digestKey([]byte(secret), raw)
+	store := &fakeAPIKeyStore{
+		records: map[string]Record{
+			hex.EncodeToString(digest): {
+				APIKey: APIKey{ID: "key-1", UserID: "user-1", IsActive: true},
+				Digest: digest,
+			},
+		},
+		touchErr: errors.New("touch unavailable"),
+	}
+	service := newAPIKeyService(t, store, secret, "", deterministicRandom(), now)
+
+	credential, err := service.Validate(context.Background(), raw)
+	if err != nil || credential.UserID != "user-1" || store.touched != "key-1" {
+		t.Fatalf("credential = %#v, touched = %q, error = %v", credential, store.touched, err)
 	}
 }
 

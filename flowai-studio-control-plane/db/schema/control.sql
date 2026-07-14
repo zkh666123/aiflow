@@ -73,7 +73,7 @@ CREATE TABLE control.api_keys (
     last_used_at timestamptz,
     expires_at timestamptz,
     user_id uuid NOT NULL REFERENCES control.users(id) ON DELETE CASCADE,
-    application_id uuid REFERENCES control.applications(id) ON DELETE SET NULL,
+    application_id uuid REFERENCES control.applications(id) ON DELETE CASCADE,
     created_at timestamptz NOT NULL DEFAULT now()
 );
 

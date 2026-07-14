@@ -11,6 +11,13 @@ const migrationPath = path.join(
   'migrations',
   '00002_identity_access.sql',
 );
+const apiKeyScopeMigrationPath = path.join(
+  root,
+  'flowai-studio-control-plane',
+  'db',
+  'migrations',
+  '00003_api_key_application_scope.sql',
+);
 const schemaPath = path.join(
   root,
   'flowai-studio-control-plane',
@@ -58,6 +65,19 @@ test('defines the complete constrained identity and access schema', () => {
   );
   assert.match(migration, /-- \+goose Down/);
   assert.match(migration, /DROP TABLE control\.users/);
+});
+
+test('revokes application-scoped API keys when the application is deleted', () => {
+  const migration = readFileSync(apiKeyScopeMigrationPath, 'utf8');
+  const schema = readFileSync(schemaPath, 'utf8');
+
+  assert.match(migration, /FOREIGN KEY \(application_id\)[\s\S]+?ON DELETE CASCADE/);
+  assert.match(
+    schema,
+    /application_id uuid REFERENCES control\.applications\(id\) ON DELETE CASCADE/,
+  );
+  assert.match(migration, /-- \+goose Down/);
+  assert.match(migration, /ON DELETE SET NULL/);
 });
 
 test('defines typed queries for every identity and access aggregate', () => {
