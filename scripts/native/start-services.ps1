@@ -11,9 +11,6 @@ if (-not $runtimeDirectory.StartsWith($rootPrefix, [StringComparison]::OrdinalIg
 }
 
 New-Item -ItemType Directory -Force -Path $runtimeDirectory | Out-Null
-& (Join-Path $PSScriptRoot 'initialize-database.ps1')
-. (Join-Path $PSScriptRoot 'load-env.ps1')
-& (Join-Path $PSScriptRoot 'check-environment.ps1')
 
 function Assert-WorkspacePath {
     param([Parameter(Mandatory)][string]$Path)
@@ -105,7 +102,44 @@ function Start-WorkspaceProcess {
     } | ConvertTo-Json | Set-Content -Encoding utf8 -LiteralPath $pidPath
 }
 
+function Start-WSLKeepAlive {
+    $name = 'wsl-keepalive'
+    $pidPath = Join-Path $runtimeDirectory "$name.json"
+    if (Test-Path -LiteralPath $pidPath) {
+        $existing = Get-Content -Raw -Encoding utf8 -LiteralPath $pidPath | ConvertFrom-Json
+        $existingProcess = Get-Process -Id ([int]$existing.pid) -ErrorAction SilentlyContinue
+        if ($null -ne $existingProcess) {
+            return
+        }
+        Remove-Item -LiteralPath $pidPath -Force
+    }
+
+    $wslExecutable = [IO.Path]::GetFullPath((Get-Command wsl.exe -ErrorAction Stop).Source)
+    $stdoutPath = Join-Path $runtimeDirectory "$name.stdout.log"
+    $stderrPath = Join-Path $runtimeDirectory "$name.stderr.log"
+    $process = Start-Process `
+        -FilePath $wslExecutable `
+        -ArgumentList @('-d', 'Ubuntu-24.04', '--', 'sleep', 'infinity') `
+        -WindowStyle Hidden `
+        -RedirectStandardOutput $stdoutPath `
+        -RedirectStandardError $stderrPath `
+        -PassThru
+
+    [ordered]@{
+        name = $name
+        pid = $process.Id
+        executable = $wslExecutable
+        arguments = @('-d', 'Ubuntu-24.04', '--', 'sleep', 'infinity')
+        startedAt = $process.StartTime.ToUniversalTime().ToString('O')
+    } | ConvertTo-Json | Set-Content -Encoding utf8 -LiteralPath $pidPath
+}
+
 try {
+    Start-WSLKeepAlive
+    & (Join-Path $PSScriptRoot 'initialize-database.ps1')
+    . (Join-Path $PSScriptRoot 'load-env.ps1')
+    & (Join-Path $PSScriptRoot 'check-environment.ps1')
+
     & uv sync --project (Join-Path $root 'proto\python')
     & uv sync --project (Join-Path $root 'flowai-studio-sandbox')
     & uv sync --project (Join-Path $root 'flowai-studio-ai-runtime')
