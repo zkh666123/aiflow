@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 import uvicorn
+import httpx
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from redis.asyncio import Redis
@@ -13,7 +14,10 @@ from sqlalchemy import text
 
 from aiflow_runtime.api.envelope import success
 from aiflow_runtime.api.errors import install_error_handlers
-from aiflow_runtime.api import api_keys, applications, shares, teams, templates, traces, users, versions, workflow_dsl, workflows
+from aiflow_runtime.api import ai, api_keys, applications, models, shares, teams, templates, token_usage, traces, users, versions, workflow_dsl, workflows
+from aiflow_runtime.ai.chat import AIExecutionServices
+from aiflow_runtime.ai.providers import ProviderRouter
+from aiflow_runtime.ai.token_usage import TokenUsageBuffer
 from aiflow_runtime.config import Settings
 from aiflow_runtime.infrastructure.database import Database
 from aiflow_runtime.infrastructure.redis import create_redis
@@ -27,9 +31,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.settings = resolved_settings
         app.state.database = Database(resolved_settings.database_url)
         app.state.redis = create_redis(resolved_settings.redis_url)
+        app.state.http_client = httpx.AsyncClient(timeout=60)
+        app.state.providers = ProviderRouter(resolved_settings, app.state.http_client)
+        app.state.token_usage = TokenUsageBuffer(app.state.database.sessions)
+        app.state.token_usage.start()
+        app.state.node_services = AIExecutionServices(app.state.providers, app.state.token_usage)
         try:
             yield
         finally:
+            await app.state.token_usage.close()
+            await app.state.http_client.aclose()
             redis_client: Redis = app.state.redis
             await redis_client.aclose()
             await app.state.database.dispose()
@@ -68,6 +79,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(templates.router, prefix="/api/workflow")
     app.include_router(versions.router)
     app.include_router(traces.router)
+    app.include_router(ai.router)
+    app.include_router(models.router)
+    app.include_router(token_usage.router)
 
     @app.get("/api/health")
     async def health(request: Request) -> Any:

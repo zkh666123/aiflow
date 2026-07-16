@@ -171,27 +171,27 @@ Commit only Task 4 files with `feat: execute workflows with Python DAG and SSE`.
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/api/models.py`
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/api/token_usage.py`
 
-- [ ] **Step 1: Add AI persistence**
+- [x] **Step 1: Add AI persistence**
 
 Create chat sessions/messages and token usage records. Token usage accepts in-memory events and flushes at 100 records, every 10 seconds, and during shutdown.
 
-- [ ] **Step 2: Implement provider routing**
+- [x] **Step 2: Implement provider routing**
 
 Normalize OpenAI-compatible, Claude, Gemini, Qwen, and Ollama configuration behind one streaming interface. Route by requested model, capability, configured key, and health; expose model list/detail/health/cost/discovery routes.
 
-- [ ] **Step 3: Implement chat endpoints**
+- [x] **Step 3: Implement chat endpoints**
 
 Implement `/api/ai/run`, `/stream-run`, `/chat`, and chat history routes. Streaming returns the legacy SSE payload shape consumed by the frontend.
 
-- [ ] **Step 4: Implement LangGraph Agent**
+- [x] **Step 4: Implement LangGraph Agent**
 
 Implement bounded ReAct tool loops and Supervisor/Worker delegation. Emit thinking, tool call/result, retrieval, delegation, worker result, final answer, and error trace entries.
 
-- [ ] **Step 5: Implement token reports**
+- [x] **Step 5: Implement token reports**
 
 Implement usage list, cost report, and model ranking endpoints from persisted usage.
 
-- [ ] **Step 6: Commit AI execution**
+- [x] **Step 6: Commit AI execution**
 
 Commit only Task 5 files with `feat: add Python providers agents and usage`.
 
