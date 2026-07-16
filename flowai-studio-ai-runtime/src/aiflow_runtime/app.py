@@ -14,7 +14,9 @@ from sqlalchemy import text
 
 from aiflow_runtime.api.envelope import success
 from aiflow_runtime.api.errors import install_error_handlers
-from aiflow_runtime.api import ai, api_keys, applications, models, shares, teams, templates, token_usage, traces, users, versions, workflow_dsl, workflows
+from aiflow_runtime.api import ai, api_keys, applications, models, rag, shares, teams, templates, token_usage, traces, users, versions, workflow_dsl, workflows
+from aiflow_runtime.ai.embeddings import Embeddings
+from aiflow_runtime.ai.retrieval import RetrievalService
 from aiflow_runtime.ai.chat import AIExecutionServices
 from aiflow_runtime.ai.providers import ProviderRouter
 from aiflow_runtime.ai.token_usage import TokenUsageBuffer
@@ -36,6 +38,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.token_usage = TokenUsageBuffer(app.state.database.sessions)
         app.state.token_usage.start()
         app.state.node_services = AIExecutionServices(app.state.providers, app.state.token_usage)
+        app.state.embeddings = Embeddings(app.state.providers)
+        app.state.retrieval = RetrievalService(app.state.database.sessions)
+        app.state.node_services.rag = app.state.retrieval
         try:
             yield
         finally:
@@ -82,6 +87,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(ai.router)
     app.include_router(models.router)
     app.include_router(token_usage.router)
+    app.include_router(rag.router)
 
     @app.get("/api/health")
     async def health(request: Request) -> Any:

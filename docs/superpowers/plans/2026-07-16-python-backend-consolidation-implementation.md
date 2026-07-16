@@ -204,23 +204,23 @@ Commit only Task 5 files with `feat: add Python providers agents and usage`.
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/ai/retrieval.py`
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/api/rag.py`
 
-- [ ] **Step 1: Create RAG persistence**
+- [x] **Step 1: Create RAG persistence**
 
 Add knowledge bases, documents, chunks, vector embeddings, FTS indexes, and ingestion status/error fields under `ai` schema.
 
-- [ ] **Step 2: Implement knowledge base and document routes**
+- [x] **Step 2: Implement knowledge base and document routes**
 
 Implement knowledge base CRUD, multipart upload, document delete, and chunk listing. Parse TXT, Markdown, PDF, and DOCX; chunk and index in a bounded background task.
 
-- [ ] **Step 3: Implement hybrid retrieval**
+- [x] **Step 3: Implement hybrid retrieval**
 
 Collect pgvector and PostgreSQL FTS candidates, apply Python BM25, fuse rankings with weighted reciprocal rank fusion, and optionally rerank with Cohere or Ollama. Reranker failures return the fused result.
 
-- [ ] **Step 4: Connect RAG workflow nodes**
+- [x] **Step 4: Connect RAG workflow nodes**
 
 Return source metadata, scores, and content through the workflow RAG executor and `/api/rag/retrieve`.
 
-- [ ] **Step 5: Commit RAG**
+- [x] **Step 5: Commit RAG**
 
 Commit only Task 6 files with `feat: add Python document ingestion and hybrid RAG`.
 
