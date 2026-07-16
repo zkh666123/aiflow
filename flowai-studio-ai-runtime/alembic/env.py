@@ -11,9 +11,11 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-database_url = os.environ.get("FLOWAI_AI_MIGRATION_DATABASE_URL")
+database_url = os.environ.get("FLOWAI_MIGRATION_DATABASE_URL") or os.environ.get(
+    "FLOWAI_AI_MIGRATION_DATABASE_URL"
+)
 if not database_url:
-    raise RuntimeError("FLOWAI_AI_MIGRATION_DATABASE_URL is required")
+    raise RuntimeError("FLOWAI_MIGRATION_DATABASE_URL is required")
 
 config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
 target_metadata = None

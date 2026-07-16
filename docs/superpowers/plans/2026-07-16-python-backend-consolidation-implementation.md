@@ -25,19 +25,19 @@
 - Create: `flowai-studio-ai-runtime/alembic/versions/0002_control_schema.py`
 - Modify: `flowai-studio-ai-runtime/alembic/env.py`
 
-- [ ] **Step 1: Add the public HTTP dependencies**
+- [x] **Step 1: Add the public HTTP dependencies**
 
 Add pinned `uvicorn`, `pyjwt`, `pwdlib[argon2]`, `httpx`, `python-multipart`, `orjson`, `langgraph`, `rank-bm25`, `pypdf`, `python-docx`, and `mcp` dependencies. Keep the sandbox gRPC client dependency until Task 8.
 
-- [ ] **Step 2: Define runtime settings**
+- [x] **Step 2: Define runtime settings**
 
 Expose `FLOWAI_HTTP_ADDR`, `FLOWAI_DATABASE_URL`, `FLOWAI_REDIS_URL`, `FLOWAI_FRONTEND_URL`, `FLOWAI_JWT_SECRET`, `FLOWAI_API_KEY_HMAC_SECRET`, provider keys, and sandbox address. The HTTP default is `127.0.0.1:3001`; public HTTP and sandbox addresses must validate independently.
 
-- [ ] **Step 3: Add shared infrastructure**
+- [x] **Step 3: Add shared infrastructure**
 
 Create one async SQLAlchemy engine/session factory and one Redis client during FastAPI lifespan. Request handlers obtain them through FastAPI dependencies and never create per-request connection pools.
 
-- [ ] **Step 4: Add compatible HTTP behavior**
+- [x] **Step 4: Add compatible HTTP behavior**
 
 Implement request IDs, CORS for the configured frontend, strict Pydantic request bodies, panic/exception recovery, and the frozen envelope:
 
@@ -45,11 +45,11 @@ Implement request IDs, CORS for the configured frontend, strict Pydantic request
 {"success": True, "code": "SUCCESS", "message": "...", "data": value, "timestamp": iso8601}
 ```
 
-- [ ] **Step 5: Move the control schema to Alembic**
+- [x] **Step 5: Move the control schema to Alembic**
 
 Create `control.users`, `applications`, `teams`, `team_members`, `team_applications`, `api_keys`, and `app_shares` with the same UUIDs, constraints, indexes, and timestamps as Goose migration `00002_identity_access.sql`. Alembic becomes the only migration runner.
 
-- [ ] **Step 6: Commit the foundation**
+- [x] **Step 6: Commit the foundation**
 
 Commit only Task 1 files with `feat: establish Python public backend foundation`.
 
@@ -325,4 +325,3 @@ Prove no Go source/module, Prisma schema/migration, NestJS package, Node backend
 - [ ] **Step 7: Commit verification fixes and completion record**
 
 Commit focused fixes, record exact commands/results, and mark every evidence-backed checkbox complete.
-
