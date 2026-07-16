@@ -135,27 +135,27 @@ Commit only Task 3 files with `feat: add Python workflow metadata APIs`.
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/workflow/state.py`
 - Modify: `flowai-studio-ai-runtime/src/aiflow_runtime/api/workflows.py`
 
-- [ ] **Step 1: Implement graph preparation**
+- [x] **Step 1: Implement graph preparation**
 
 Validate unique nodes, valid edges, one Start node, reachable Output nodes, and acyclicity. Build adjacency, reverse adjacency, and `runtime_in_degree` maps.
 
-- [ ] **Step 2: Implement scheduling**
+- [x] **Step 2: Implement scheduling**
 
 Use an async ready queue, wait for all active parents at joins, recursively prune non-selected condition branches, enforce node timeout and exponential retry, and stop scheduling after cancellation.
 
-- [ ] **Step 3: Implement local node executors**
+- [x] **Step 3: Implement local node executors**
 
 Execute Start, UserInput, Condition, and Output locally. Route LLM, RAG, Agent, and Skill to Task 5-7 service interfaces without gRPC.
 
-- [ ] **Step 4: Implement execution state and cancellation**
+- [x] **Step 4: Implement execution state and cancellation**
 
 Persist durable execution/trace summaries in PostgreSQL and runtime state/cancel flags in Redis. Implement `/run`, `/run/stream`, `/cancel/:executionId`, and `/running`.
 
-- [ ] **Step 5: Emit compatible SSE**
+- [x] **Step 5: Emit compatible SSE**
 
 Emit exactly one `workflow_start`, ordered `node_status`, zero or more `agent_trace`, periodic `heartbeat`, and exactly one `done` or `error`. Disconnecting the client sets cancellation.
 
-- [ ] **Step 6: Commit executable workflows**
+- [x] **Step 6: Commit executable workflows**
 
 Commit only Task 4 files with `feat: execute workflows with Python DAG and SSE`.
 

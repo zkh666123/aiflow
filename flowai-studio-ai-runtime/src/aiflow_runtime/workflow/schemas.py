@@ -25,6 +25,20 @@ class UpdateWorkflowRequest(StrictModel):
     variables: dict[str, Any] | None = None
 
 
+class ExecutionControl(StrictModel):
+    workflow_timeout_ms: int = Field(default=300000, ge=0, le=3600000, alias="workflowTimeoutMs")
+    node_timeout_ms: int = Field(default=60000, ge=0, le=600000, alias="nodeTimeoutMs")
+    heartbeat_interval_ms: int = Field(default=15000, ge=0, le=60000, alias="heartbeatIntervalMs")
+    max_retries: int = Field(default=0, ge=0, le=5, alias="maxRetries")
+    continue_on_error: bool = Field(default=False, alias="continueOnError")
+
+
+class RunWorkflowRequest(StrictModel):
+    inputs: dict[str, Any]
+    session_id: str | None = Field(default=None, alias="sessionId")
+    control: ExecutionControl = Field(default_factory=ExecutionControl)
+
+
 class CreateVersionRequest(StrictModel):
     label: str | None = None
     description: str | None = None
