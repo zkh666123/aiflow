@@ -13,7 +13,7 @@ from sqlalchemy import text
 
 from aiflow_runtime.api.envelope import success
 from aiflow_runtime.api.errors import install_error_handlers
-from aiflow_runtime.api import api_keys, applications, shares, teams, users
+from aiflow_runtime.api import api_keys, applications, shares, teams, templates, traces, users, versions, workflow_dsl, workflows
 from aiflow_runtime.config import Settings
 from aiflow_runtime.infrastructure.database import Database
 from aiflow_runtime.infrastructure.redis import create_redis
@@ -62,6 +62,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(teams.router)
     app.include_router(api_keys.router)
     app.include_router(shares.router)
+    app.include_router(workflows.router)
+    app.include_router(workflow_dsl.router)
+    app.include_router(templates.router, prefix="/api")
+    app.include_router(templates.router, prefix="/api/workflow")
+    app.include_router(versions.router)
+    app.include_router(traces.router)
 
     @app.get("/api/health")
     async def health(request: Request) -> Any:

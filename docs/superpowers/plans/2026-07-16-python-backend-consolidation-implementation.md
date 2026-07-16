@@ -105,23 +105,23 @@ Commit only Task 2 files with `feat: migrate identity and access to Python`.
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/api/versions.py`
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/api/traces.py`
 
-- [ ] **Step 1: Create workflow persistence**
+- [x] **Step 1: Create workflow persistence**
 
 Add workflows, templates, template ratings, workflow versions, executions, traces, and spans. Store node/edge/config snapshots as JSONB and index owner/application/status/timestamps.
 
-- [ ] **Step 2: Implement workflow and DSL routes**
+- [x] **Step 2: Implement workflow and DSL routes**
 
 Implement workflow CRUD/by-app/running routes and DSL export/import/validate using DSL version `1.0`, kind `Workflow`, eight canonical node types, and the legacy `user-input` input alias.
 
-- [ ] **Step 3: Implement templates**
+- [x] **Step 3: Implement templates**
 
 Implement `/api/templates/**` and `/api/workflow/templates/**` aliases for CRUD, categories, publish, archive, import, and rating.
 
-- [ ] **Step 4: Implement versions and traces**
+- [x] **Step 4: Implement versions and traces**
 
 Implement create/list/get/delete/compare/rollback for versions and trace get/by-workflow/slow/stats routes. Version diff reports node, edge, variable, and metadata changes.
 
-- [ ] **Step 5: Commit workflow metadata APIs**
+- [x] **Step 5: Commit workflow metadata APIs**
 
 Commit only Task 3 files with `feat: add Python workflow metadata APIs`.
 
