@@ -14,7 +14,10 @@ from sqlalchemy import text
 
 from aiflow_runtime.api.envelope import success
 from aiflow_runtime.api.errors import install_error_handlers
-from aiflow_runtime.api import ai, api_keys, applications, models, rag, shares, teams, templates, token_usage, traces, users, versions, workflow_dsl, workflows
+from aiflow_runtime.api import ai, api_keys, applications, mcp, models, operations, rag, shares, skills, teams, templates, token_usage, traces, users, versions, workflow_dsl, workflows
+from aiflow_runtime.ai.skills import SkillService
+from aiflow_runtime.infrastructure.cache import LayeredCache
+from aiflow_runtime.infrastructure.limits import RuntimeLimits
 from aiflow_runtime.ai.embeddings import Embeddings
 from aiflow_runtime.ai.retrieval import RetrievalService
 from aiflow_runtime.ai.chat import AIExecutionServices
@@ -41,6 +44,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.embeddings = Embeddings(app.state.providers)
         app.state.retrieval = RetrievalService(app.state.database.sessions)
         app.state.node_services.rag = app.state.retrieval
+        app.state.skills = SkillService(resolved_settings.sandbox_address, resolved_settings.grpc_token.get_secret_value() if resolved_settings.grpc_token else None)
+        app.state.node_services.skills = app.state.skills
+        app.state.limits = RuntimeLimits(app.state.redis)
+        app.state.cache = LayeredCache(app.state.redis)
         try:
             yield
         finally:
@@ -88,6 +95,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(models.router)
     app.include_router(token_usage.router)
     app.include_router(rag.router)
+    app.include_router(mcp.router)
+    app.include_router(skills.router)
+    app.include_router(operations.router)
 
     @app.get("/api/health")
     async def health(request: Request) -> Any:

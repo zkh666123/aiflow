@@ -236,23 +236,23 @@ Commit only Task 6 files with `feat: add Python document ingestion and hybrid RA
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/api/skills.py`
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/api/operations.py`
 
-- [ ] **Step 1: Implement MCP management**
+- [x] **Step 1: Implement MCP management**
 
 Persist MCP server configuration, keep stdio/HTTP sessions in the Python process, cache connection/tool catalogs in Redis, and implement server CRUD/connect/disconnect/discover/call routes.
 
-- [ ] **Step 2: Implement skills**
+- [x] **Step 2: Implement skills**
 
 Implement builtin list, custom Skill CRUD, and execution. Calculator uses an AST allowlist; Python code execution calls the independent sandbox service with time/output limits.
 
-- [ ] **Step 3: Implement rate and concurrency controls**
+- [x] **Step 3: Implement rate and concurrency controls**
 
 Use Redis Lua for token bucket and execution lease acquire/release. Implement closed/open/half-open circuit breaker state and the frozen rate-limit inspection/reset routes.
 
-- [ ] **Step 4: Implement cache and health**
+- [x] **Step 4: Implement cache and health**
 
 Implement bounded L1 LRU plus L2 Redis with null values, TTL jitter, and Redis mutex. Health reports PostgreSQL, pgvector, Redis, provider, and sandbox state plus cache stats.
 
-- [ ] **Step 5: Commit tools and controls**
+- [x] **Step 5: Commit tools and controls**
 
 Commit only Task 7 files with `feat: add Python tools sandbox and runtime controls`.
 
