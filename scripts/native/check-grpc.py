@@ -8,7 +8,7 @@ from datetime import UTC, datetime, timedelta
 import grpc
 from google.protobuf import timestamp_pb2
 
-from aiflow.v1 import common_pb2, models_pb2, models_pb2_grpc, sandbox_pb2, sandbox_pb2_grpc
+from aiflow.v1 import common_pb2, sandbox_pb2, sandbox_pb2_grpc
 
 METADATA_KEY = "x-flowai-service-token"
 
@@ -25,25 +25,18 @@ def request_context() -> common_pb2.RequestContext:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("service", choices=("ai", "sandbox"))
+    parser.add_argument("service", choices=("sandbox",))
     parser.add_argument("--address", required=True)
     arguments = parser.parse_args()
 
     token = os.environ["FLOWAI_GRPC_TOKEN"]
     metadata = ((METADATA_KEY, token),)
     with grpc.insecure_channel(arguments.address) as channel:
-        if arguments.service == "ai":
-            response = models_pb2_grpc.ModelServiceStub(channel).HealthCheck(
-                models_pb2.ModelServiceHealthCheckRequest(context=request_context()),
-                metadata=metadata,
-                timeout=10,
-            )
-        else:
-            response = sandbox_pb2_grpc.SandboxServiceStub(channel).HealthCheck(
-                sandbox_pb2.SandboxServiceHealthCheckRequest(context=request_context()),
-                metadata=metadata,
-                timeout=10,
-            )
+        response = sandbox_pb2_grpc.SandboxServiceStub(channel).HealthCheck(
+            sandbox_pb2.SandboxServiceHealthCheckRequest(context=request_context()),
+            metadata=metadata,
+            timeout=10,
+        )
 
     print(
         json.dumps(

@@ -13,7 +13,7 @@ if (-not (Test-Path -LiteralPath $runtimeDirectory)) {
     return
 }
 
-foreach ($name in @('control-plane', 'ai-runtime', 'sandbox')) {
+foreach ($name in @('backend', 'control-plane', 'ai-runtime', 'sandbox')) {
     $pidPath = Join-Path $runtimeDirectory "$name.json"
     if (-not (Test-Path -LiteralPath $pidPath)) {
         continue

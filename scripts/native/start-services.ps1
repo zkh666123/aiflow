@@ -140,24 +140,8 @@ try {
     . (Join-Path $PSScriptRoot 'load-env.ps1')
     & (Join-Path $PSScriptRoot 'check-environment.ps1')
 
-    & uv sync --project (Join-Path $root 'proto\python')
     & uv sync --project (Join-Path $root 'flowai-studio-sandbox')
-    & uv sync --project (Join-Path $root 'flowai-studio-ai-runtime')
-
-    $controlPlane = Join-Path $runtimeDirectory 'flowai-control-plane.exe'
-    $previousGoMaxProcs = $env:GOMAXPROCS
-    try {
-        $env:GOMAXPROCS = '2'
-        Push-Location (Join-Path $root 'flowai-studio-control-plane')
-        & go build -p 1 -o $controlPlane ./cmd/api
-        if ($LASTEXITCODE -ne 0) {
-            throw 'Go control plane build failed.'
-        }
-    }
-    finally {
-        Pop-Location
-        $env:GOMAXPROCS = $previousGoMaxProcs
-    }
+    & uv sync --project (Join-Path $root 'flowai-studio-backend')
 
     Start-WorkspaceProcess `
         -Name 'sandbox' `
@@ -167,16 +151,10 @@ try {
     Wait-TcpPort $env:FLOWAI_SANDBOX_GRPC_ADDR
 
     Start-WorkspaceProcess `
-        -Name 'ai-runtime' `
-        -Executable (Join-Path $root 'flowai-studio-ai-runtime\.venv\Scripts\python.exe') `
-        -Arguments @('-m', 'aiflow_runtime.server') `
-        -WorkingDirectory $root
-    Wait-TcpPort $env:FLOWAI_AI_GRPC_ADDR
-
-    Start-WorkspaceProcess `
-        -Name 'control-plane' `
-        -Executable $controlPlane `
-        -WorkingDirectory (Join-Path $root 'flowai-studio-control-plane')
+        -Name 'backend' `
+        -Executable (Join-Path $root 'flowai-studio-backend\.venv\Scripts\python.exe') `
+        -Arguments @('-m', 'aiflow_runtime.app') `
+        -WorkingDirectory (Join-Path $root 'flowai-studio-backend')
     Wait-TcpPort $env:FLOWAI_HTTP_ADDR
 
     & (Join-Path $PSScriptRoot 'check-services.ps1')

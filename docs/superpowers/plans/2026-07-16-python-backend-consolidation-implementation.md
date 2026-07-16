@@ -271,23 +271,23 @@ Commit only Task 7 files with `feat: add Python tools sandbox and runtime contro
 - Move: completed Python backend from `flowai-studio-ai-runtime/` to `flowai-studio-backend/`
 - Remove: obsolete AI gRPC server files and control-plane protobuf generation
 
-- [ ] **Step 1: Switch native lifecycle scripts**
+- [x] **Step 1: Switch native lifecycle scripts**
 
 Run Alembic once, start sandbox and FastAPI only, wait for ports 50052 and 3001, and remove Go/sqlc/goose/Buf requirements that no remaining runtime or sandbox interface uses.
 
-- [ ] **Step 2: Switch frontend default backend**
+- [x] **Step 2: Switch frontend default backend**
 
 Keep the frontend proxy at `/api` -> `127.0.0.1:3001`; remove references that specifically expect NestJS or the Go health payload.
 
-- [ ] **Step 3: Remove obsolete backends**
+- [x] **Step 3: Remove obsolete backends**
 
 Delete Go control plane, Go toolchain entries, Node backend source/package/Prisma migrations, and internal AI gRPC service code. Preserve the frozen contracts and sandbox protocol needed by the Python backend.
 
-- [ ] **Step 4: Update documentation**
+- [x] **Step 4: Update documentation**
 
 Document Python 3.13, uv, PostgreSQL/pgvector, Redis, native start/stop commands, directory layout, environment variables, and the all-Python architecture.
 
-- [ ] **Step 5: Commit cutover**
+- [x] **Step 5: Commit cutover**
 
 Commit Task 8 with `refactor: cut over FlowAI Studio to Python backend` while explicitly excluding unrelated user-owned frontend changes unless they are required by the cutover.
 
