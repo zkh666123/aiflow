@@ -1,7 +1,7 @@
 [project]
 name = "flowai-studio-sandbox"
 version = "0.1.0"
-description = "Fail-closed FlowAI Studio CPython WASI sandbox manager"
+description = "Restricted native Python sandbox service for FlowAI Studio"
 requires-python = ">=3.13,<3.14"
 dependencies = [
   "flowai-proto",
@@ -9,7 +9,6 @@ dependencies = [
   "protobuf==6.31.1",
   "pydantic==2.13.4",
   "pydantic-settings==2.14.2",
-  "wasmtime==46.0.1",
 ]
 
 [build-system]

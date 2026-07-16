@@ -4,8 +4,6 @@ package aiflow.v1;
 
 import "aiflow/v1/common.proto";
 
-option go_package = "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/gen/aiflow/v1;aiflowv1";
-
 service SandboxService {
   rpc ExecutePython(ExecutePythonRequest) returns (ExecutePythonResponse);
   rpc HealthCheck(SandboxServiceHealthCheckRequest) returns (SandboxServiceHealthCheckResponse);

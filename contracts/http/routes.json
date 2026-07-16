@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "source": "current worktree NestJS controllers",
+  "source": "frozen public API compatibility baseline captured before the Python cutover",
   "count": 112,
   "routes": [
     {

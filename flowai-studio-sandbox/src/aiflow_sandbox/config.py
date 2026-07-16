@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import ipaddress
-import re
+import sys
 from pathlib import Path
 
 from pydantic import Field, SecretStr, field_validator
@@ -20,13 +20,9 @@ class Settings(BaseSettings):
         validation_alias="FLOWAI_SANDBOX_GRPC_ADDR",
     )
     grpc_token: SecretStr = Field(validation_alias="FLOWAI_GRPC_TOKEN")
-    wasi_python_path: Path = Field(
-        default=Path("flowai-studio-sandbox/runtime/python.wasm"),
-        validation_alias="FLOWAI_WASI_PYTHON_PATH",
-    )
-    wasi_python_sha256: str = Field(
-        default="",
-        validation_alias="FLOWAI_WASI_PYTHON_SHA256",
+    python_executable: Path = Field(
+        default=Path(sys.executable),
+        validation_alias="FLOWAI_SANDBOX_PYTHON",
     )
 
     @field_validator("grpc_address")
@@ -55,10 +51,10 @@ class Settings(BaseSettings):
             raise ValueError("service token must contain at least 32 non-blank characters")
         return value
 
-    @field_validator("wasi_python_sha256")
+    @field_validator("python_executable")
     @classmethod
-    def validate_sha256(cls, value: str) -> str:
-        normalized = value.strip().lower()
-        if normalized and not re.fullmatch(r"[0-9a-f]{64}", normalized):
-            raise ValueError("WASI SHA-256 must be empty or 64 hexadecimal characters")
-        return normalized
+    def validate_python_executable(cls, value: Path) -> Path:
+        resolved = value.expanduser().resolve()
+        if not resolved.is_file():
+            raise ValueError("sandbox Python executable does not exist")
+        return resolved

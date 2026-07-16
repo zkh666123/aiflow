@@ -3,7 +3,7 @@ from __future__ import annotations
 import ipaddress
 from urllib.parse import urlparse
 
-from pydantic import AliasChoices, Field, SecretStr, field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,7 +15,6 @@ class Settings(BaseSettings):
     )
 
     http_address: str = Field(default="127.0.0.1:3001", validation_alias="FLOWAI_HTTP_ADDR")
-    grpc_address: str = Field(default="127.0.0.1:50051", validation_alias="FLOWAI_AI_GRPC_ADDR")
     sandbox_address: str = Field(default="127.0.0.1:50052", validation_alias="FLOWAI_SANDBOX_GRPC_ADDR")
     grpc_token: SecretStr | None = Field(default=None, validation_alias="FLOWAI_GRPC_TOKEN")
     jwt_secret: SecretStr = Field(validation_alias="FLOWAI_JWT_SECRET")
@@ -24,9 +23,7 @@ class Settings(BaseSettings):
         default=None,
         validation_alias="FLOWAI_API_KEY_HMAC_PREVIOUS_SECRET",
     )
-    database_url: str = Field(
-        validation_alias=AliasChoices("FLOWAI_DATABASE_URL", "FLOWAI_AI_DATABASE_URL")
-    )
+    database_url: str = Field(validation_alias="FLOWAI_DATABASE_URL")
     redis_url: str = Field(validation_alias="FLOWAI_REDIS_URL")
     frontend_url: str = Field(default="http://127.0.0.1:5173", validation_alias="FLOWAI_FRONTEND_URL")
     jwt_expiration: str = Field(default="168h", validation_alias="FLOWAI_JWT_EXPIRATION")
@@ -37,7 +34,7 @@ class Settings(BaseSettings):
     ollama_base_url: str = Field(default="http://127.0.0.1:11434", validation_alias="OLLAMA_BASE_URL")
     health_timeout_seconds: float = Field(default=2.0, gt=0, le=30)
 
-    @field_validator("http_address", "grpc_address", "sandbox_address")
+    @field_validator("http_address", "sandbox_address")
     @classmethod
     def validate_loopback_address(cls, value: str) -> str:
         try:

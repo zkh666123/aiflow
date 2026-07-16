@@ -4,12 +4,12 @@
     {
       "method": "GET",
       "path": "/api/apps/:appId/share",
-      "decision": "Go exposes GET in addition to the legacy POST, PATCH, and DELETE routes because the frontend reads current share settings."
+      "decision": "The Python backend exposes GET in addition to the frozen POST, PATCH, and DELETE routes because the frontend reads current share settings."
     },
     {
       "method": "*",
       "path": "/api/workflow/templates/**",
-      "decision": "Go exposes compatibility aliases while retaining /api/templates/** as the canonical public routes."
+      "decision": "The Python backend exposes compatibility aliases while retaining /api/templates/** as the canonical public routes."
     }
   ]
 }

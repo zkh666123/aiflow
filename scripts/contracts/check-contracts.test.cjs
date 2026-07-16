@@ -40,11 +40,11 @@ test('accepts the committed contract baseline', () => {
 test('rejects generated manifest drift', () => {
   const contractsRoot = copyContracts();
   try {
-    const routesPath = path.join(contractsRoot, 'http', 'routes.json');
-    const routes = JSON.parse(fs.readFileSync(routesPath, 'utf8'));
-    routes.routes.pop();
-    routes.count -= 1;
-    fs.writeFileSync(routesPath, `${JSON.stringify(routes, null, 2)}\n`);
+    const callsPath = path.join(contractsRoot, 'http', 'frontend-calls.json');
+    const calls = JSON.parse(fs.readFileSync(callsPath, 'utf8'));
+    calls.calls.pop();
+    calls.count -= 1;
+    fs.writeFileSync(callsPath, `${JSON.stringify(calls, null, 2)}\n`);
 
     assert.throws(() => checkContracts(contractsRoot), /manifest drift/);
   } finally {

@@ -59,12 +59,24 @@ async def create_team(body: CreateTeamRequest, principal: CurrentUser, session: 
         {"name": validate_name(body.name, 50), "description": body.description, "avatar": body.avatar, "owner_id": principal.user_id},
     )
     row = result.mappings().one()
-    await session.execute(
-        text("INSERT INTO control.team_members(team_id,user_id,role) VALUES(CAST(:team_id AS uuid),CAST(:user_id AS uuid),'owner')"),
+    member = await session.execute(
+        text("""INSERT INTO control.team_members(team_id,user_id,role)
+                VALUES(CAST(:team_id AS uuid),CAST(:user_id AS uuid),'owner')
+                RETURNING id::text,team_id::text,user_id::text,role,joined_at"""),
         {"team_id": row["id"], "user_id": principal.user_id},
     )
     await session.commit()
-    return success({**team_data(row), "myRole": "owner", "memberCount": 1, "appCount": 0}, status_code=201)
+    return success(
+        {
+            **team_data(row),
+            "myRole": "owner",
+            "memberCount": 1,
+            "appCount": 0,
+            "members": [member_data(member.mappings().one())],
+            "applications": [],
+        },
+        status_code=201,
+    )
 
 
 @router.get("")
@@ -193,7 +205,7 @@ async def leave_team(team_id: str, principal: CurrentUser, session: Session) -> 
         {"team": require_uuid(team_id, "teamId"), "user": principal.user_id},
     )
     if result.rowcount == 0:
-        raise APIError(403, "FORBIDDEN", "Team owner cannot leave the team")
+        raise APIError(400, "BAD_REQUEST", "Team owner cannot leave the team")
     await session.commit()
     return success({"success": True}, status_code=201)
 

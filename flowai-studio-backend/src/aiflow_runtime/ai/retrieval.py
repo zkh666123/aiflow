@@ -1,6 +1,7 @@
 from __future__ import annotations
+import math
+from collections import Counter
 from typing import Any
-from rank_bm25 import BM25Okapi
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiflow_runtime.workflow.executors import NodeResult
@@ -13,7 +14,16 @@ class RetrievalService:
             WHERE knowledge_base_id=CAST(:kb AS uuid) ORDER BY fts_score DESC LIMIT 500"""),{"kb":kb_id,"query":query})
         rows=[dict(row) for row in result.mappings()]
         if not rows:return []
-        bm25=BM25Okapi([row["content"].lower().split() for row in rows]);scores=bm25.get_scores(query.lower().split())
+        documents=[row["content"].lower().split() for row in rows]
+        terms=query.lower().split();average_length=sum(map(len,documents))/len(documents);frequencies=[Counter(document) for document in documents]
+        document_frequency={term:sum(1 for frequency in frequencies if term in frequency) for term in set(terms)}
+        scores=[]
+        for document,frequency in zip(documents,frequencies,strict=True):
+            score=0.0
+            for term in terms:
+                count=frequency.get(term,0);idf=math.log(1+(len(documents)-document_frequency.get(term,0)+.5)/(document_frequency.get(term,0)+.5))
+                score+=idf*(count*2.5)/(count+1.5*(1-.75+.75*len(document)/max(average_length,1))) if count else 0
+            scores.append(score)
         fts_rank=sorted(range(len(rows)),key=lambda i:rows[i]["fts_score"],reverse=True);bm_rank=sorted(range(len(rows)),key=lambda i:scores[i],reverse=True)
         fused:dict[int,float]={}
         for rank,index in enumerate(fts_rank):fused[index]=fused.get(index,0)+.5/(60+rank+1)

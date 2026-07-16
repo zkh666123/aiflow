@@ -80,7 +80,7 @@ async def list_api_keys(
         text("""
             SELECT id::text,name,key_prefix,scopes,is_active,last_used_at,expires_at,application_id::text,created_at
             FROM control.api_keys WHERE user_id=CAST(:user AS uuid)
-              AND (:app IS NULL OR application_id=CAST(:app AS uuid)) ORDER BY created_at DESC
+              AND (CAST(:app AS uuid) IS NULL OR application_id=CAST(:app AS uuid)) ORDER BY created_at DESC
         """), {"user": principal.user_id, "app": app}
     )
     return success([api_key_data(row) for row in result.mappings()])

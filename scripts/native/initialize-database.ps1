@@ -8,7 +8,9 @@ $backend = Join-Path $root 'flowai-studio-backend'
 
 function New-Secret {
     $bytes = [byte[]]::new(32)
-    [Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+    $generator = [Security.Cryptography.RandomNumberGenerator]::Create()
+    try { $generator.GetBytes($bytes) }
+    finally { $generator.Dispose() }
     return [Convert]::ToBase64String($bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_')
 }
 function Read-EnvFile([string]$Path) {
@@ -26,9 +28,13 @@ function Ensure([System.Collections.IDictionary]$Values, [string]$Name, [scriptb
 function Sql-Literal([string]$Value) { return "'" + $Value.Replace("'", "''") + "'" }
 function Url-Password([string]$Url) { $parts = ([Uri]$Url).UserInfo.Split(':', 2); return [Uri]::UnescapeDataString($parts[1]) }
 function Admin-Psql([string]$Database, [string]$Sql) {
-    $old = $OutputEncoding
-    try { $OutputEncoding = [Text.UTF8Encoding]::new($false); $output = ($Sql | & wsl.exe -u postgres -- psql -X -v ON_ERROR_STOP=1 -d $Database 2>&1 | Out-String).Trim(); if ($LASTEXITCODE -ne 0) { throw $output } }
-    finally { $OutputEncoding = $old }
+    $old = $OutputEncoding; $oldPreference = $ErrorActionPreference
+    try {
+        $OutputEncoding = [Text.UTF8Encoding]::new($false); $ErrorActionPreference = 'Continue'
+        $output = ($Sql | & wsl.exe -u postgres -- psql -X -v ON_ERROR_STOP=1 -d $Database 2>&1 | Out-String).Trim()
+        if ($LASTEXITCODE -ne 0) { throw $output }
+    }
+    finally { $OutputEncoding = $old; $ErrorActionPreference = $oldPreference }
 }
 
 $settings = Read-EnvFile $envPath
@@ -43,10 +49,10 @@ if (-not $settings.Contains('FLOWAI_API_KEY_HMAC_PREVIOUS_SECRET')) { $settings[
 Ensure $settings 'FLOWAI_FRONTEND_URL' { 'http://127.0.0.1:5173' }
 Ensure $settings 'FLOWAI_REDIS_URL' { 'redis://127.0.0.1:6379/0' }
 if (-not $settings.Contains('FLOWAI_DATABASE_URL')) {
-    $settings['FLOWAI_DATABASE_URL'] = if ($settings['FLOWAI_AI_DATABASE_URL']) { $settings['FLOWAI_AI_DATABASE_URL'] } else { "postgresql+psycopg://flowai_ai:$([Uri]::EscapeDataString($runtimePassword))@127.0.0.1:5432/flowai_studio?sslmode=disable" }
+    $settings['FLOWAI_DATABASE_URL'] = "postgresql+psycopg://flowai_ai:$([Uri]::EscapeDataString($runtimePassword))@127.0.0.1:5432/flowai_studio?sslmode=disable"
 }
 if (-not $settings.Contains('FLOWAI_MIGRATION_DATABASE_URL')) {
-    $settings['FLOWAI_MIGRATION_DATABASE_URL'] = if ($settings['FLOWAI_AI_MIGRATION_DATABASE_URL']) { $settings['FLOWAI_AI_MIGRATION_DATABASE_URL'] } else { "postgresql+psycopg://flowai_ai_migrator:$([Uri]::EscapeDataString($migrationPassword))@127.0.0.1:5432/flowai_studio?sslmode=disable" }
+    $settings['FLOWAI_MIGRATION_DATABASE_URL'] = "postgresql+psycopg://flowai_ai_migrator:$([Uri]::EscapeDataString($migrationPassword))@127.0.0.1:5432/flowai_studio?sslmode=disable"
 }
 $settings.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" } | Set-Content -Encoding utf8 -LiteralPath $envPath
 
@@ -62,6 +68,7 @@ ALTER ROLE flowai_ai_migrator PASSWORD __MIGRATION_PASSWORD__;
 SELECT 'CREATE DATABASE flowai_studio' WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname='flowai_studio') \gexec
 REVOKE ALL ON DATABASE flowai_studio FROM PUBLIC;
 GRANT CONNECT ON DATABASE flowai_studio TO flowai_ai,flowai_ai_migrator;
+GRANT CREATE ON DATABASE flowai_studio TO flowai_ai_migrator;
 '@
 Admin-Psql 'postgres' ($cluster.Replace('__RUNTIME_PASSWORD__',$runtimePasswordSql).Replace('__MIGRATION_PASSWORD__',$migrationPasswordSql))
 Admin-Psql 'flowai_studio' @'

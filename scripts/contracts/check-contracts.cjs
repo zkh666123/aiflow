@@ -157,7 +157,7 @@ function checkContracts(contractsRoot = path.join(repoRoot, 'contracts')) {
   );
 
   try {
-    const generated = generateContracts(generatedRoot);
+    const generated = generateContracts(generatedRoot, contractsRoot);
 
     for (const relativePath of generatedFiles) {
       const committedPath = path.join(contractsRoot, relativePath);

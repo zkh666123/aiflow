@@ -5,8 +5,6 @@ package aiflow.v1;
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/gulugulu33/aiflow-studio/flowai-studio-control-plane/internal/gen/aiflow/v1;aiflowv1";
-
 message RequestContext {
   string request_id = 1;
   string trace_id = 2;

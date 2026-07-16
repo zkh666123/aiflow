@@ -18,7 +18,7 @@ class SkillService:
     def __init__(self,address:str,token:str|None)->None:self.address=address;self.token=token
     async def execute_python(self,code:str)->dict[str,object]:
         async with grpc.aio.insecure_channel(self.address) as channel:
-            stub=sandbox_pb2_grpc.SandboxServiceStub(channel);metadata=(("authorization",f"Bearer {self.token}"),) if self.token else None
+            stub=sandbox_pb2_grpc.SandboxServiceStub(channel);metadata=(("x-flowai-service-token",self.token),) if self.token else None
             response=await stub.ExecutePython(sandbox_pb2.ExecutePythonRequest(context=common_pb2.RequestContext(request_id=secrets.token_hex(16),caller="python-backend"),code=code,limits=sandbox_pb2.SandboxLimits(timeout_millis=10000,memory_bytes=134217728,output_bytes=65536,fuel=100000000)),metadata=metadata)
             return {"status":response.status,"stdout":response.stdout,"stderr":response.stderr,"exitCode":response.exit_code,"durationMs":response.duration_millis}
     async def execute_node(self,node:dict,context:dict,inputs:dict)->NodeResult:

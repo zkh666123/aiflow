@@ -8,21 +8,18 @@ from aiflow.v1 import sandbox_pb2_grpc
 from aiflow_sandbox.config import Settings
 from aiflow_sandbox.grpc.auth import ServiceTokenInterceptor
 from aiflow_sandbox.grpc.service import SandboxService
-from aiflow_sandbox.wasi.artifact import WasiArtifact
+from aiflow_sandbox.native.runner import NativePythonRunner
 
 
 def create_server(settings: Settings) -> grpc.aio.Server:
-    artifact = WasiArtifact(
-        settings.wasi_python_path,
-        settings.wasi_python_sha256,
-    )
+    runner = NativePythonRunner(settings.python_executable)
     server = grpc.aio.server(
         interceptors=[
             ServiceTokenInterceptor(settings.grpc_token.get_secret_value()),
         ]
     )
     sandbox_pb2_grpc.add_SandboxServiceServicer_to_server(
-        SandboxService(artifact), server
+        SandboxService(runner), server
     )
     if server.add_insecure_port(settings.grpc_address) == 0:
         raise RuntimeError(f"unable to bind sandbox to {settings.grpc_address}")

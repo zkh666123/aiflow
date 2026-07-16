@@ -315,6 +315,14 @@ export interface NodeExecution {
   completedAt?: string
 }
 
+export interface AgentTraceStep {
+  type: 'thinking' | 'tool_call' | 'tool_result' | 'rag_retrieve' | 'worker_delegate' | 'worker_result' | 'final_answer' | 'error'
+  content: string
+  agentId?: string
+  timestamp: number
+  data?: Record<string, unknown>
+}
+
 // 模板市场相关类型
 export type TemplateCategory = 'productivity' | 'customer-service' | 'content-creation' | 'data-analysis' | 'education' | 'development' | 'other'
 

@@ -1,26 +1,17 @@
 from __future__ import annotations
 
-from typing import Any,TypedDict
-
-from langgraph.graph import END,START,StateGraph
+from typing import Any
 
 from aiflow_runtime.ai.providers import ProviderRouter
-
-
-class AgentState(TypedDict,total=False):
-    messages:list[dict[str,str]];result:str
 
 
 class AgentService:
     def __init__(self,providers:ProviderRouter)->None:self.providers=providers
     async def run(self,data:dict[str,Any],prompt:str)->tuple[str,list[dict[str,Any]]]:
         model=str(data.get("model") or "llama3.2")
-        async def respond(state:AgentState)->AgentState:
-            result=await self.providers.complete(model,state["messages"],float(data.get("temperature",.7)),int(data.get("maxTokens",1024)))
-            return {"result":result.content}
-        graph=StateGraph(AgentState);graph.add_node("respond",respond);graph.add_edge(START,"respond");graph.add_edge("respond",END)
         messages=[{"role":"system","content":str(data.get("systemPrompt") or "You are a helpful agent.")},{"role":"user","content":prompt}]
-        output=await graph.compile().ainvoke({"messages":messages})
+        response=await self.providers.complete(model,messages,float(data.get("temperature",.7)),int(data.get("maxTokens",1024)))
+        output={"result":response.content}
         timestamp=__import__("time").time_ns()//1_000_000
         agent_id="supervisor" if data.get("agentMode")=="supervisor" else "single_agent"
         traces=[{"type":"thinking","content":"Selecting the next action","agentId":agent_id,"timestamp":timestamp}]

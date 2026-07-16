@@ -46,7 +46,7 @@ async def list_applications(principal: CurrentUser, session: Session) -> Any:
     result = await session.execute(
         text("""
             SELECT DISTINCT a.id::text,a.name,a.description,a.icon,a.status,a.created_at,a.updated_at,
-                CASE WHEN a.owner_id=CAST(:user_id AS uuid) THEN 'owner' ELSE 'team' END AS access_type
+                CASE WHEN a.owner_id=CAST(:user_id AS uuid) THEN 'owner' ELSE ta.permission END AS access_type
             FROM control.applications a
             LEFT JOIN control.team_applications ta ON ta.application_id=a.id
             LEFT JOIN control.team_members tm ON tm.team_id=ta.team_id

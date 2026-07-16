@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import asyncio
 import secrets
+import sys
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Any
@@ -129,7 +131,13 @@ app = create_app()
 def main() -> None:
     settings = Settings()
     host, port_text = settings.http_address.rsplit(":", 1)
-    uvicorn.run("aiflow_runtime.app:app", host=host, port=int(port_text), factory=False)
+    server = uvicorn.Server(
+        uvicorn.Config(app, host=host, port=int(port_text), factory=False)
+    )
+    if sys.platform == "win32":
+        asyncio.run(server.serve(), loop_factory=asyncio.SelectorEventLoop)
+    else:
+        asyncio.run(server.serve())
 
 
 if __name__ == "__main__":

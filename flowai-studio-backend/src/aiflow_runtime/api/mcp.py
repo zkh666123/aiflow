@@ -38,7 +38,9 @@ async def delete(server_id:str,principal:CurrentUser,session:Session)->Any:
 async def rpc(request:Request,row:Any,method:str,params:dict[str,Any])->Any:
     if not row["url"]:raise APIError(400,"BAD_REQUEST","HTTP MCP URL is required")
     response=await request.app.state.http_client.post(row["url"],json={"jsonrpc":"2.0","id":1,"method":method,"params":params});response.raise_for_status();data=response.json()
-    if "error" in data:raise APIError(502,"MCP_ERROR",str(data["error"]));return data.get("result")
+    if "error" in data:
+        raise APIError(502,"MCP_ERROR",str(data["error"]))
+    return data.get("result")
 @router.post("/servers/{server_id}/connect",status_code=201)
 async def connect(server_id:str,request:Request,principal:CurrentUser,session:Session)->Any:
     row=await owned(session,principal.user_id,server_id);tools=await rpc(request,row,"tools/list",{});await session.execute(text("UPDATE ai.mcp_servers SET state='connected',tools=CAST(:tools AS jsonb) WHERE id=CAST(:id AS uuid)"),{"id":row["id"],"tools":json.dumps((tools or {}).get("tools",[]))});await session.commit();return success({"state":"connected","tools":(tools or {}).get("tools",[])},status_code=201)

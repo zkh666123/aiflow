@@ -1,7 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const {
-  extractControllerRoutes,
   extractFrontendCalls,
   normalizeComparablePath,
   walkFiles,
@@ -61,27 +60,20 @@ function writeJson(filePath, value) {
   fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
 }
 
-function generateContracts(outputRoot) {
-  const backendRoot = path.join(repoRoot, 'flowai-studio-backend', 'src');
+function generateContracts(
+  outputRoot,
+  baselineRoot = path.join(repoRoot, 'contracts'),
+) {
   const frontendRoot = path.join(repoRoot, 'flowai-studio-frontend', 'src');
-
-  const controllerFiles = walkFiles(
-    backendRoot,
-    (filePath) => filePath.endsWith('.controller.ts'),
-  ).sort();
   const frontendFiles = walkFiles(
     frontendRoot,
     (filePath) => /\.(ts|tsx)$/.test(filePath) && !filePath.endsWith('.d.ts'),
   ).sort();
 
-  const routes = controllerFiles
-    .flatMap((filePath) =>
-      extractControllerRoutes(
-        fs.readFileSync(filePath, 'utf8'),
-        toRepoPath(filePath),
-      ),
-    )
-    .sort(compareEntries);
+  const routeManifest = JSON.parse(
+    fs.readFileSync(path.join(baselineRoot, 'http', 'routes.json'), 'utf8'),
+  );
+  const routes = routeManifest.routes;
 
   const calls = frontendFiles
     .flatMap((filePath) =>
@@ -94,12 +86,7 @@ function generateContracts(outputRoot) {
 
   const gaps = findCompatibilityGaps(routes, calls);
 
-  writeJson(path.join(outputRoot, 'http', 'routes.json'), {
-    schemaVersion: '1.0',
-    source: 'current worktree NestJS controllers',
-    count: routes.length,
-    routes,
-  });
+  writeJson(path.join(outputRoot, 'http', 'routes.json'), routeManifest);
   writeJson(path.join(outputRoot, 'http', 'frontend-calls.json'), {
     schemaVersion: '1.0',
     source: 'current worktree React TypeScript sources',
@@ -108,7 +95,7 @@ function generateContracts(outputRoot) {
   });
   writeJson(path.join(outputRoot, 'http', 'compatibility-gaps.json'), {
     schemaVersion: '1.0',
-    source: 'frontend calls without a matching NestJS method/path',
+    source: 'frontend calls not present in the frozen public API baseline',
     count: gaps.length,
     gaps,
   });

@@ -5,9 +5,9 @@ FlowAI Studio 是基于 React 与 Python 的可视化 AI 工作流编排平台�
 ## 技术栈
 
 - 前端：React 18、TypeScript、Vite、Zustand、Ant Design、React Flow。
-- 后端：Python 3.13、FastAPI、Pydantic v2、SQLAlchemy 2、Alembic、LangGraph。
+- 后端：Python 3.13、FastAPI、Pydantic v2、SQLAlchemy 2、Alembic、Python Agent 状态机。
 - 数据：PostgreSQL 16、pgvector、Redis。
-- 沙箱：独立 Python gRPC 进程，通过受限 WASI CPython 执行代码；Web 进程不直接执行用户命令。
+- 沙箱：独立 Python gRPC 进程，通过 `python -I -S`、AST/内置函数白名单、超时和输出限制执行本地代码；Web 进程不直接执行用户命令。
 
 本地环境不使用 Docker。PostgreSQL/pgvector 与 Redis 运行在 WSL，FastAPI、前端和沙箱运行在 Windows。
 
@@ -79,7 +79,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/stop-services
 
 ## 工作流
 
-平台固定支持八类节点：Start、UserInput、LLM、RAG、Agent、Skill、Condition、Output。平台 DAG 由 Python 调度器执行，LangGraph 只用于 Agent 内部流程。SSE 事件保持 `workflow_start`、`node_status`、`agent_trace`、`heartbeat`、`done`、`error`。
+平台固定支持八类节点：Start、UserInput、LLM、RAG、Agent、Skill、Condition、Output。平台 DAG 与 Agent 状态机均由 Python 执行。SSE 事件保持 `workflow_start`、`node_status`、`agent_trace`、`heartbeat`、`done`、`error`。
 
 ## 开源协议
 

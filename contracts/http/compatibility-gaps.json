@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "source": "frontend calls without a matching NestJS method/path",
+  "source": "frontend calls not present in the frozen public API baseline",
   "count": 11,
   "gaps": [
     {

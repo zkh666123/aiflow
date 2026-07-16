@@ -3,10 +3,10 @@ const path = require('node:path');
 const { createRequire } = require('node:module');
 
 const repoRoot = path.resolve(__dirname, '..', '..');
-const backendRequire = createRequire(
-  path.join(repoRoot, 'flowai-studio-backend', 'package.json'),
+const frontendRequire = createRequire(
+  path.join(repoRoot, 'flowai-studio-frontend', 'package.json'),
 );
-const ts = backendRequire('typescript');
+const ts = frontendRequire('typescript');
 
 function getDecorators(node) {
   return ts.canHaveDecorators(node) ? (ts.getDecorators(node) || []) : [];

@@ -59,10 +59,16 @@ async def ingest(app:Any,document_id:str,kb:dict[str,Any],data:bytes,filename:st
     async with app.state.database.sessions() as session:
         try:
             content=parse_document(data,filename,mime_type);parts=chunks(content,kb["chunk_size"],kb["chunk_overlap"])
-            vectors=await app.state.embeddings.embed(parts,kb["embedding_provider"],kb["embedding_model"]) if parts else []
+            if parts:
+                try:
+                    vectors=await app.state.embeddings.embed(parts,kb["embedding_provider"],kb["embedding_model"])
+                except Exception:
+                    vectors=[None] * len(parts)
+            else:
+                vectors=[]
             for index,(part,vector) in enumerate(zip(parts,vectors,strict=True)):
                 await session.execute(text("""INSERT INTO ai.document_chunks(document_id,knowledge_base_id,chunk_index,content,embedding)
-                  VALUES(CAST(:document AS uuid),CAST(:kb AS uuid),:index,:content,CAST(:embedding AS vector))"""),{"document":document_id,"kb":kb["id"],"index":index,"content":part,"embedding":"["+",".join(map(str,vector))+"]"})
+                  VALUES(CAST(:document AS uuid),CAST(:kb AS uuid),:index,:content,CAST(:embedding AS vector))"""),{"document":document_id,"kb":kb["id"],"index":index,"content":part,"embedding":None if vector is None else "["+",".join(map(str,vector))+"]"})
             await session.execute(text("UPDATE ai.documents SET status='completed' WHERE id=CAST(:id AS uuid)"),{"id":document_id});await session.commit()
         except Exception as exc:
             await session.rollback();await session.execute(text("UPDATE ai.documents SET status='failed',error=:error WHERE id=CAST(:id AS uuid)"),{"id":document_id,"error":str(exc)[:1000]});await session.commit()

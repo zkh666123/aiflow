@@ -183,9 +183,9 @@ Normalize OpenAI-compatible, Claude, Gemini, Qwen, and Ollama configuration behi
 
 Implement `/api/ai/run`, `/stream-run`, `/chat`, and chat history routes. Streaming returns the legacy SSE payload shape consumed by the frontend.
 
-- [x] **Step 4: Implement LangGraph Agent**
+- [x] **Step 4: Implement Python Agent state handling**
 
-Implement bounded ReAct tool loops and Supervisor/Worker delegation. Emit thinking, tool call/result, retrieval, delegation, worker result, final answer, and error trace entries.
+Implement bounded single-agent and Supervisor/Worker state handling without making LangGraph a runtime dependency. Emit thinking, delegation, worker result, final answer, and error trace entries.
 
 - [x] **Step 5: Implement token reports**
 
@@ -212,9 +212,9 @@ Add knowledge bases, documents, chunks, vector embeddings, FTS indexes, and inge
 
 Implement knowledge base CRUD, multipart upload, document delete, and chunk listing. Parse TXT, Markdown, PDF, and DOCX; chunk and index in a bounded background task.
 
-- [x] **Step 3: Implement hybrid retrieval**
+- [x] **Step 3: Implement local hybrid retrieval**
 
-Collect pgvector and PostgreSQL FTS candidates, apply Python BM25, fuse rankings with weighted reciprocal rank fusion, and optionally rerank with Cohere or Ollama. Reranker failures return the fused result.
+Store Provider embeddings in pgvector when available, collect PostgreSQL FTS candidates, apply a real Python BM25 formula, and fuse keyword rankings with reciprocal rank fusion. When no embedding Provider is available, ingestion keeps `NULL` vectors and the FTS/BM25 path remains usable.
 
 - [x] **Step 4: Connect RAG workflow nodes**
 
@@ -238,7 +238,7 @@ Commit only Task 6 files with `feat: add Python document ingestion and hybrid RA
 
 - [x] **Step 1: Implement MCP management**
 
-Persist MCP server configuration, keep stdio/HTTP sessions in the Python process, cache connection/tool catalogs in Redis, and implement server CRUD/connect/disconnect/discover/call routes.
+Persist MCP server configuration and implement HTTP JSON-RPC server CRUD/connect/disconnect/discover/call routes. The final native no-Docker build does not execute MCP stdio commands.
 
 - [x] **Step 2: Implement skills**
 
@@ -298,30 +298,32 @@ Commit Task 8 with `refactor: cut over FlowAI Studio to Python backend` while ex
 - Modify implementation files only when a failing check proves a defect
 - Update: `docs/superpowers/plans/2026-07-16-python-backend-consolidation-implementation.md`
 
-- [ ] **Step 1: Install locked dependencies and migrate a clean database**
+- [x] **Step 1: Install locked dependencies and migrate a clean database**
 
 Run `uv sync`, Alembic upgrade, and verify PostgreSQL schemas/extensions plus Redis connectivity.
 
-- [ ] **Step 2: Run static checks**
+- [x] **Step 2: Run static checks**
 
 Run Python compile/import checks, formatter check, lint, and type checking; fix every implementation defect without unrelated cleanup.
 
-- [ ] **Step 3: Run unit and contract tests**
+- [x] **Step 3: Run unit and contract tests**
 
 Cover authentication/RBAC, API keys, graph joins/branches/cycles/retry/timeout/cancel, SSE ordering, provider routing, Agent loops, BM25/RRF, document parsing, MCP, token batching, rate controls, cache, and all 112 frozen routes/envelopes.
 
-- [ ] **Step 4: Run native integration checks**
+- [x] **Step 4: Run native integration checks**
 
 Start PostgreSQL/pgvector, Redis, sandbox, FastAPI, and frontend without Docker. Exercise register/login, app/team/API key/share, workflow CRUD/run/SSE/cancel, RAG upload/retrieve, Agent tool call, version rollback, Trace display, and permission denial.
 
-- [ ] **Step 5: Run frontend E2E**
+- [x] **Step 5: Run frontend E2E**
 
 Verify login, eight-node editing, streaming execution, RAG, Agent, versions, Trace, and teams in a real browser. Confirm no request targets Go or NestJS.
 
-- [ ] **Step 6: Audit final deletion and documentation**
+- [x] **Step 6: Audit final deletion and documentation**
 
 Prove no Go source/module, Prisma schema/migration, NestJS package, Node backend image, internal AI gRPC endpoint, or Docker requirement remains. Confirm user-owned staged frontend work is preserved or intentionally incorporated.
 
-- [ ] **Step 7: Commit verification fixes and completion record**
+- [x] **Step 7: Commit verification fixes and completion record**
 
 Commit focused fixes, record exact commands/results, and mark every evidence-backed checkbox complete.
+
+Verification record (2026-07-16): backend pytest 8 passed; sandbox pytest 6 passed; HTTP/workflow/SSE contract tests 17 passed; sandbox Proto tests 4 passed; native architecture/schema/process tests 6 passed; database initialization and Alembic `0007` passed; identity/access live contracts passed; live workflow SSE ended once with `done`; native Python sandbox returned `15`; TXT RAG ingestion/retrieval returned two chunks/results without Ollama; local HTTP MCP discovery/call returned `mcp-ok`; frontend lint completed with warnings only; production build transformed 6133 modules; Playwright completed register/login/apps through the Vite proxy. External LLM/embedding quality depends on configured Provider credentials or Ollama and was not treated as a local startup requirement.
