@@ -68,27 +68,27 @@ Commit only Task 1 files with `feat: establish Python public backend foundation`
 - Create: `flowai-studio-ai-runtime/src/aiflow_runtime/api/shares.py`
 - Modify: `flowai-studio-ai-runtime/src/aiflow_runtime/app.py`
 
-- [ ] **Step 1: Port authentication**
+- [x] **Step 1: Port authentication**
 
 Implement registration, login, profile read/update, Argon2 password hashing, HS256 JWT, Redis login failure lock, bearer-token dependency, and the exact `/api/users/**` status codes.
 
-- [ ] **Step 2: Port application ownership and status changes**
+- [x] **Step 2: Port application ownership and status changes**
 
 Implement application create/list/get/update/delete plus publish, unpublish, archive, and unarchive using the frozen response fields and authorization rules.
 
-- [ ] **Step 3: Port three-level RBAC**
+- [x] **Step 3: Port three-level RBAC**
 
 Implement global `admin/member`, team `owner/admin/editor/viewer`, and team application `full_access/can_edit/can_view`. Centralize permission evaluation so workflow routes can reuse it.
 
-- [ ] **Step 4: Port teams and grants**
+- [x] **Step 4: Port teams and grants**
 
 Implement team CRUD, member add/role/remove/leave, and team application add/permission/remove routes.
 
-- [ ] **Step 5: Port API keys and sharing**
+- [x] **Step 5: Port API keys and sharing**
 
 Generate `sk-` plus 64 lowercase hex characters, return plaintext only once, store HMAC-SHA256 digest and seven-character prefix, and implement list/toggle/revoke. Implement share create/read/update/revoke, public share lookup, embed response, and idempotent share generation.
 
-- [ ] **Step 6: Commit identity and access**
+- [x] **Step 6: Commit identity and access**
 
 Commit only Task 2 files with `feat: migrate identity and access to Python`.
 
