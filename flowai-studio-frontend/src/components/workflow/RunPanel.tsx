@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Button, Input, Empty } from 'antd'
+import { useEffect, useRef, useState } from 'react'
+import { Button, Input, Empty, message } from 'antd'
 import {
   PlayCircleOutlined,
   StopOutlined,
@@ -15,36 +15,96 @@ import './RunPanel.css'
 
 const { TextArea } = Input
 
+const DEFAULT_INPUTS_TEXT = '{\n  "question": "你好"\n}'
+
+const buildInputsText = (nodes: Array<{ type?: string; data?: any }>) => {
+  const inputTemplate: Record<string, unknown> = {}
+
+  for (const node of nodes) {
+    if (node.type === 'start' && Array.isArray(node.data?.variables)) {
+      for (const variable of node.data.variables) {
+        if (variable?.key) {
+          inputTemplate[variable.key] = variable.value ?? ''
+        }
+      }
+    }
+
+    if (node.type === 'userInput' && node.data?.inputField) {
+      const field = node.data.inputField
+      if (!(field in inputTemplate)) {
+        inputTemplate[field] = ''
+      }
+    }
+  }
+
+  if (Object.keys(inputTemplate).length === 0) {
+    return DEFAULT_INPUTS_TEXT
+  }
+
+  return JSON.stringify(inputTemplate, null, 2)
+}
+
 const RunPanel: React.FC = () => {
   const {
     currentWorkflow,
     nodes,
+    edges,
     executionStates,
     executionStatus,
+    saveWorkflow,
     streamRunWorkflow,
     setExecutionStatus,
     clearExecutionStates,
   } = useStore()
 
-  const [inputsText, setInputsText] = useState('{"question": "你好，请介绍一下自己"}')
+  const [inputsText, setInputsText] = useState(DEFAULT_INPUTS_TEXT)
   const [isRunning, setIsRunning] = useState(false)
+  const preparedWorkflowIdRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    const workflowId = currentWorkflow?.id ?? null
+    if (!workflowId) {
+      preparedWorkflowIdRef.current = null
+      setInputsText(DEFAULT_INPUTS_TEXT)
+      return
+    }
+
+    if (preparedWorkflowIdRef.current !== workflowId) {
+      setInputsText(buildInputsText(nodes))
+      preparedWorkflowIdRef.current = workflowId
+    }
+  }, [currentWorkflow?.id, nodes])
 
   const handleRun = async () => {
     const workflowId = currentWorkflow?.id
-    if (!workflowId) return
+    if (!workflowId) {
+      message.warning('请先选择工作流')
+      return
+    }
 
-    let inputs: Record<string, any> = {}
+    let inputs: Record<string, any>
     try {
-      inputs = JSON.parse(inputsText)
+      const parsed = JSON.parse(inputsText)
+      if (!parsed || Array.isArray(parsed) || typeof parsed !== 'object') {
+        throw new Error('Inputs must be an object')
+      }
+      inputs = parsed as Record<string, any>
     } catch {
-      // Keep empty
+      message.error('输入参数必须是合法的 JSON 对象')
+      return
+    }
+
+    if (nodes.length === 0) {
+      message.warning('请先添加至少一个节点再运行工作流')
+      return
     }
 
     setIsRunning(true)
     try {
+      await saveWorkflow(workflowId, { nodes, edges })
       await streamRunWorkflow(workflowId, inputs)
-    } catch {
-      // Error handled in store
+    } catch (error) {
+      message.error(error instanceof Error ? error.message : '工作流执行失败')
     } finally {
       setIsRunning(false)
     }
@@ -85,7 +145,6 @@ const RunPanel: React.FC = () => {
       </div>
 
       <div className="run-panel-body">
-        {/* Input section */}
         <div className="run-section">
           <label className="run-section-label">输入参数 (JSON)</label>
           <TextArea
@@ -98,7 +157,6 @@ const RunPanel: React.FC = () => {
           />
         </div>
 
-        {/* Action buttons */}
         <div className="run-actions">
           {isRunning ? (
             <Button
@@ -133,13 +191,12 @@ const RunPanel: React.FC = () => {
           )}
         </div>
 
-        {/* Execution status */}
         {executionStatus && (
           <div className={`run-status run-status--${executionStatus}`}>
             {statusIcon(executionStatus)}
             <span>
               {executionStatus === 'running'
-                ? '运行中…'
+                ? '运行中...'
                 : executionStatus === 'success'
                 ? '执行完成'
                 : executionStatus === 'failed'
@@ -149,7 +206,6 @@ const RunPanel: React.FC = () => {
           </div>
         )}
 
-        {/* Node results */}
         {hasResults ? (
           <div className="run-results">
             <label className="run-section-label">节点执行结果</label>
@@ -182,7 +238,7 @@ const RunPanel: React.FC = () => {
           !isRunning && (
             <div className="run-empty">
               <Empty
-                description="点击「运行工作流」开始调试"
+                description="点击“运行工作流”开始调试"
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
               />
             </div>

@@ -107,8 +107,16 @@ const Debug: React.FC = () => {
       const nodes: any[] = Array.isArray(wfData.nodes) ? wfData.nodes : []
       // 找出所有 UserInput 节点，提取 inputField 作为预填充的 key
       const fields: string[] = []
-      const inputTemplate: Record<string, string> = {}
+      const inputTemplate: Record<string, unknown> = {}
       for (const node of nodes) {
+        if (node.type === 'start' && Array.isArray(node.data?.variables)) {
+          for (const variable of node.data.variables) {
+            if (variable?.key) {
+              inputTemplate[variable.key] = variable.value ?? ''
+            }
+          }
+        }
+
         if (node.type === 'userInput' && node.data?.inputField) {
           const field = node.data.inputField
           fields.push(field)
@@ -116,8 +124,11 @@ const Debug: React.FC = () => {
           inputTemplate[field] = `请输入${node.data.label || field}`
         }
       }
+      for (const field of fields) {
+        inputTemplate[field] = String(inputTemplate[field] ?? '')
+      }
       setRequiredInputFields(fields)
-      if (fields.length > 0) {
+      if (Object.keys(inputTemplate).length > 0) {
         setWorkflowInputsText(JSON.stringify(inputTemplate, null, 2))
       } else {
         setWorkflowInputsText('{}')
@@ -277,6 +288,7 @@ const Debug: React.FC = () => {
       const reader = response.body?.getReader()
       if (!reader) throw new Error('No response body')
 
+      let receivedTerminalEvent = false
       const parser = createParser((event) => {
         if (event.type === 'event') {
           try {
@@ -296,13 +308,15 @@ const Debug: React.FC = () => {
               if (data.data?.elapsedMs != null) setWfElapsed(data.data.elapsedMs)
               if (data.data?.progress) setWfProgress(data.data.progress)
             } else if (data.type === 'done') {
-              setWorkflowResult(data.data?.finalContext || data.data)
+              receivedTerminalEvent = true
+              setWorkflowResult(data.data?.finalOutput ?? data.data?.finalContext ?? data.data)
               setWfStatus('success')
               if (data.data?.stats?.durationMs != null) setWfElapsed(data.data.stats.durationMs)
               if (data.data?.stats) {
                 setWfProgress({ executed: data.data.stats.executed, total: data.data.stats.total, percentage: 100 })
               }
             } else if (data.type === 'error') {
+              receivedTerminalEvent = true
               setWfStatus('failed')
               const isTimeout = data.data?.isTimeout
               const isCancelled = data.data?.isCancelled
@@ -324,8 +338,10 @@ const Debug: React.FC = () => {
         parser.feed(decoder.decode(value))
       }
 
-      // If status wasn't set by events, mark as success
-      setWfStatus(prev => prev === 'running' ? 'success' : prev)
+      if (!receivedTerminalEvent) {
+        setWfStatus(prev => prev === 'running' ? 'failed' : prev)
+        message.error('Workflow stream ended before completion')
+      }
     } catch {
       message.error('工作流执行失败')
       setWfStatus('failed')
@@ -372,6 +388,7 @@ const Debug: React.FC = () => {
   }
 
   const nodeExecList = Object.values(nodeStates)
+  const hasWorkflowResult = workflowResult !== null && workflowResult !== undefined
 
   return (
     <div className="debug-page">
@@ -581,7 +598,7 @@ const Debug: React.FC = () => {
             >
               执行工作流
             </Button>
-            {(nodeExecList.length > 0 || workflowResult) && !isLoading && (
+            {(nodeExecList.length > 0 || hasWorkflowResult) && !isLoading && (
               <Button
                 icon={<ClearOutlined />}
                 onClick={handleClearWorkflow}
@@ -681,7 +698,7 @@ const Debug: React.FC = () => {
           )}
 
           {/* 最终结果 */}
-          {workflowResult && (
+          {hasWorkflowResult && (
             <div className="debug-wf-result">
               <Divider orientation="left" style={{ fontSize: 12, color: 'var(--c-text-secondary)' }}>
                 最终输出
@@ -693,7 +710,7 @@ const Debug: React.FC = () => {
           )}
 
           {/* 空状态 */}
-          {wfStatus === 'idle' && nodeExecList.length === 0 && !workflowResult && (
+          {wfStatus === 'idle' && nodeExecList.length === 0 && !hasWorkflowResult && (
             <div className="debug-wf-empty">
               <Empty
                 image={<PlayCircleOutlined style={{ fontSize: 36, color: 'var(--c-green)', opacity: 0.4 }} />}

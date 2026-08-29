@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand'
-import { Workflow, WorkflowNode, WorkflowEdge, NodeExecution } from '../../types'
+import { Workflow, WorkflowNode, WorkflowEdge, NodeExecution, AgentTraceStep } from '../../types'
 import request from '../../utils/axios'
 import { 
   OnNodesChange, 
@@ -20,6 +20,7 @@ export interface WorkflowSlice {
   selectedNode: WorkflowNode | null
   canvasZoom: number
   executionStates: Record<string, NodeExecution>
+  agentTraces: Record<string, AgentTraceStep[]>
   executionStatus: string | null
   isLoading: boolean
   
@@ -35,8 +36,10 @@ export interface WorkflowSlice {
   updateNodeData: (nodeId: string, data: any) => void
   setCanvasZoom: (zoom: number) => void
   setExecutionState: (nodeId: string, state: NodeExecution) => void
+  setAgentTrace: (nodeId: string, trace: AgentTraceStep) => void
   setExecutionStatus: (status: string | null) => void
   setExecutionStates: (states: Record<string, NodeExecution>) => void
+  setAgentTraces: (traces: Record<string, AgentTraceStep[]>) => void
   fetchWorkflows: (appId: string) => Promise<Workflow[]>
   fetchWorkflowById: (id: string) => Promise<Workflow>
   createWorkflow: (appId: string, data: { name: string; description?: string; nodes?: any[]; edges?: any[] }) => Promise<Workflow>
@@ -56,6 +59,7 @@ export const createWorkflowSlice: StateCreator<WorkflowSlice> = (set, get) => ({
   selectedNode: null,
   canvasZoom: 1,
   executionStates: {},
+  agentTraces: {},
   executionStatus: null,
   isLoading: false,
 
@@ -115,13 +119,24 @@ export const createWorkflowSlice: StateCreator<WorkflowSlice> = (set, get) => ({
       },
     })
   },
+
+  setAgentTrace: (nodeId, trace) => {
+    set((state) => ({
+      agentTraces: {
+        ...state.agentTraces,
+        [nodeId]: [...(state.agentTraces[nodeId] || []), trace],
+      },
+    }))
+  },
   
   setExecutionStatus: (status) => set({ executionStatus: status }),
   
   setExecutionStates: (states) => set({ executionStates: states }),
+
+  setAgentTraces: (traces) => set({ agentTraces: traces }),
   
   runWorkflow: async (workflowId) => {
-    set({ isLoading: true, executionStatus: 'running', executionStates: {} })
+    set({ isLoading: true, executionStatus: 'running', executionStates: {}, agentTraces: {} })
     try {
       const response = await request.post(`/workflows/${workflowId}/run`, { inputs: {} })
       set({ isLoading: false, executionStatus: 'success' })
@@ -133,7 +148,7 @@ export const createWorkflowSlice: StateCreator<WorkflowSlice> = (set, get) => ({
   },
 
   streamRunWorkflow: async (workflowId, inputs) => {
-    set({ executionStatus: 'running', executionStates: {} })
+    set({ executionStatus: 'running', executionStates: {}, agentTraces: {} })
     
     try {
       const response = await fetch(`/api/workflows/${workflowId}/run/stream`, {
@@ -150,21 +165,47 @@ export const createWorkflowSlice: StateCreator<WorkflowSlice> = (set, get) => ({
       const reader = response.body?.getReader()
       if (!reader) throw new Error('No reader available')
 
+      let streamError: string | null = null
+      let receivedDone = false
       const parser = createParser((event) => {
         if (event.type === 'event') {
           try {
             const data = JSON.parse(event.data)
             if (data.type === 'node_status') {
               const { nodeId, status, output, error } = data.data
-              set((state) => ({
-                executionStates: {
-                  ...state.executionStates,
-                  [nodeId]: { nodeId, status, output, error }
+              set((state) => {
+                const nextState = {
+                  executionStates: {
+                    ...state.executionStates,
+                    [nodeId]: { nodeId, status, output, error },
+                  },
                 }
+
+                if (output?.steps && Array.isArray(output.steps)) {
+                  return {
+                    ...nextState,
+                    agentTraces: {
+                      ...state.agentTraces,
+                      [nodeId]: output.steps,
+                    },
+                  }
+                }
+
+                return nextState
+              })
+            } else if (data.type === 'agent_trace') {
+              const { nodeId, trace } = data.data
+              set((state) => ({
+                agentTraces: {
+                  ...state.agentTraces,
+                  [nodeId]: [...(state.agentTraces[nodeId] || []), trace],
+                },
               }))
             } else if (data.type === 'done') {
+              receivedDone = true
               set({ executionStatus: 'success' })
             } else if (data.type === 'error') {
+              streamError = data.data?.message || data.message || 'Workflow execution failed'
               set({ executionStatus: 'failed' })
             }
           } catch (e) {
@@ -178,6 +219,14 @@ export const createWorkflowSlice: StateCreator<WorkflowSlice> = (set, get) => ({
         const { done, value } = await reader.read()
         if (done) break
         parser.feed(decoder.decode(value))
+      }
+
+      if (streamError) {
+        throw new Error(streamError)
+      }
+
+      if (!receivedDone) {
+        throw new Error('Workflow stream ended before completion')
       }
     } catch (error) {
       set({ executionStatus: 'failed' })
@@ -274,5 +323,5 @@ export const createWorkflowSlice: StateCreator<WorkflowSlice> = (set, get) => ({
     }
   },
 
-  clearExecutionStates: () => set({ executionStates: {} }),
+  clearExecutionStates: () => set({ executionStates: {}, agentTraces: {} }),
 })
