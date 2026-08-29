@@ -76,11 +76,3 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/native/stop-services
 - `FLOWAI_GRPC_TOKEN`
 
 模型 Provider 可按需配置 `OPENAI_API_KEY`、`ANTHROPIC_API_KEY`、`GEMINI_API_KEY`、`DASHSCOPE_API_KEY` 和 `OLLAMA_BASE_URL`。
-
-## 工作流
-
-平台固定支持八类节点：Start、UserInput、LLM、RAG、Agent、Skill、Condition、Output。平台 DAG 与 Agent 状态机均由 Python 执行。SSE 事件保持 `workflow_start`、`node_status`、`agent_trace`、`heartbeat`、`done`、`error`。
-
-## 开源协议
-
-小圆项目，禁止商业用途。
